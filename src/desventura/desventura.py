@@ -1,6 +1,6 @@
 import os
-#import rich
-#import csv
+import rich
+import csv
 
 
 def menu_principal():
@@ -50,13 +50,13 @@ def creditos():
 
 
 def tutorial():
-#    oro = 1
-#    pala = 1
-#    cuerda = 1
-#    puerta = 0
-#    ventana = 0
-#    norte = 0
-#    sur = 0
+    oro = 1
+    pala = 1
+    cuerda = 1
+    puerta = 0
+    ventana = 0
+    norte = 0
+    sur = 0
     while True:
         try:
             with open("TUTORIAL.txt", "rt", encoding="utf-8") as arch:
