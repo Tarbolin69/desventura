@@ -1,7 +1,55 @@
 import os
+#import rich
+#import csv
 
 
-# def tutorial():
+def menu_principal():
+    print(
+        r"""
+  .-,--.                       .
+  ' |   \ ,-. ,-. .  , ,-. ,-. |- . . ,-. ,-.
+  , |   / |-' `-. | /  |-' | | |  | | |   ,-|
+  `-^--'  `-' `-' `'   `-' ' ' `' `-^ '   `-^
+  - El mejor juego de texto escrito en Python
+
+[1] Nuevo Juego [2] Cargar [3] Creditos [0] Salir
+"""
+    )
+    while True:
+        eleccion = input(f"\n¿Que te gustaria hacer?\n> ")
+        match eleccion:
+            case "1":
+                aceptar = input(f"Desearia ver el tutorial? (Si/No)\n> ")
+                aceptar = aceptar.strip().lower()
+                match aceptar:
+                    case "si":
+                        tutorial()
+                    case "no":
+                        iniciar_nueva_partida()
+                    case _:
+                        print("Opcion invalida")
+                        continue
+            case "2":
+                continuar_partida()
+            case "3":
+                creditos()
+            case "0":
+                print("¡Hasta pronto!")
+                break
+            case _:
+                print("Opcion invalida")
+                continue
+
+
+def creditos():
+    try:
+        with open("creditos.txt", "rt", encoding="utf-8") as creditos:
+            print(creditos.read())
+    except FileExistsError or FileNotFoundError as err:
+        print("ERROR: " + repr(err))
+
+
+def tutorial():
 #    oro = 1
 #    pala = 1
 #    cuerda = 1
@@ -9,34 +57,15 @@ import os
 #    ventana = 0
 #    norte = 0
 #    sur = 0
-#    if (oro == 1 and pala == 1 and cuerda == 1) and (ventana == 0 and puerta == 0):
-#        print(
-#            r"""
-#    Este el tutorial oficial de Desventura. Aqui veras las bases sobre como avanzar en el
-#    juego y como usar las herramientas que tienes a tu disposicion. Si has jugado juegos
-#    de texto en el pasado, entonces esto te resultara familar.
-#
-#    Imaginemos lo siguiente:
-#
-#                                   /`\            (        /`\
-#                            /`\   // \\           ))      // \\
-#                           // \\  // \\  /`\______||      // \\
-#                           // \\  // \\ // /       \  /`\ // \\
-#                           // \\  // \\ ///_________\// \\// \\
-#                           // \\  // \\ // |-[+]---| // \\// \\
-#                           // \\  // \\ // |-------| // \\// \\
-#              _____,....-----'------'-----''-------'---'----'--
-#   `~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~
-#    Te encuentras solo en una cabaña, en un bosque, en el medio de la noche. Al
-#    NORTE hay una PUERTA y una VENTANA. En la esquina de la cabaña puedes ver una
-#    PALA, una CUERDA y ORO. Tienes que esconder el ORO antes de que algo malo ocurra.
-#
-#    Las opciones a tu disposicion en Desventura son las siguientes:
-#        * Mirar {objeto/dirección}: Te da la descripción de un objeto o lo que hay en una dirección
-#        * Agarrar {objeto}: Te permite poner un objeto que puedas agarrar en tu inventario
-#        * Usar {objeto}: Usas uno de tus objetos
-#        * Ir {objeto/direccion}: Vas hacia un objeto o dirección
-#
+    while True:
+        try:
+            with open("TUTORIAL.txt", "rt", encoding="utf-8") as arch:
+                print(arch.read())
+#                eleccion = int(input(f"\n¿Que te gustaria hacer?\n> "))
+        except FileNotFoundError or FileExistsError as err:
+            print("ERROR :" + repr(err))
+
+
 #    ¡Intenta usar una de estas opciones y observa que ocurre!"""
 #        )
 #    while True:
@@ -81,37 +110,6 @@ import os
 #            )
 #
 #
-# print(  # Tipografia: stampatello
-#    r"""
-# .-,--.                       .
-#' |   \ ,-. ,-. .  , ,-. ,-. |- . . ,-. ,-.
-# , |   / |-' `-. | /  |-' | | |  | | |   ,-|
-# `-^--'  `-' `-' `'   `-' ' ' `' `-^ '   `-^
-# - El mejor juego de texto escrito en Python
-#
-# [1] Nuevo Juego [2] Cargar [3] Creditos [0] Salir
-#
-#                                           """
-# )
-# eleccion = int(input(f"\n¿Que te gustaria hacer?\n> "))
-#
-#
-# if eleccion == 1:
-#    print("Desearia ver el tutorial? (Si/No)")
-#    aceptar = input(f"\n¿Que te gustaria hacer?\n> ")
-#    aceptar = aceptar.lower()
-#    if aceptar == "si":
-#        tutorial()
-#    else:
-#        print(
-#            r"""
-#        Te encuentras solo en una gran y poderosa oscuridad. La unica luz viene de atras de
-#        las rejas de tu celda. A tu lado tienes un CERILLO y una LAMPARA. Frente a ti, hay
-#        una PUERTA DE ACERO cerrado con llave la cual lleva hacia la libertad.
-#
-#        ¿Que vas a hacer?
-#        """
-#        )
 
 
 def limpiar_pantalla():
@@ -144,3 +142,5 @@ ubiacion = ""  # Para decirle al jugador donde estan
 inventario = []  # list[str], ayuda a guardar el estado de la partida
 
 nivel = 0  # Guarda el progreso de la historia
+
+menu_principal()
