@@ -19,9 +19,9 @@ NORTE hay una PUERTA y una VENTANA. En la esquina de la cabaña puedes ver una
 PALA, una CUERDA y ORO. Tienes que esconder el ORO antes de que algo malo ocurra.
 
 Las opciones a tu disposición en Desventura son las siguientes:
-    * Mirar {objeto/dirección}: Te da la descripción de un objeto o lo que hay en una dirección
-    * Agarrar {objeto}: Te permite poner un objeto que puedas agarrar en tu inventario
-    * Usar {objeto}: Usas uno de tus objetos
-    * Ir {objeto/dirección}: Vas hacia un objeto o dirección
+    * Mirar <objeto>: Te da la descripción de un objeto o sobre donde estas
+    * Agarrar <objeto>: Te permite poner un objeto en tu inventario
+    * Usar <objeto>: Usa uno de tus objetos
+    * Ir <objeto/dirección>: Vas hacia un objeto o dirección
 
-¡Intenta usar una de estas opciones y observa que ocurre!"""
+¡Intenta usar una de estas opciones y observa que ocurre!

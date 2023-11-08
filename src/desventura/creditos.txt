@@ -2,7 +2,7 @@
 
 Desventura es un motor de juegos creado en la Sede Pinamar de UADE por:
 
-* [nombres]
+* [Nombres]
 
 en 2023 como parte del projecto final de Algoritmos y Datos 1
 

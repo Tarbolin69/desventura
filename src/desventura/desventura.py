@@ -1,6 +1,7 @@
-import os
-import rich
 import csv
+import os
+
+import rich
 
 
 def menu_principal():
@@ -61,9 +62,11 @@ def tutorial():
         try:
             with open("TUTORIAL.txt", "rt", encoding="utf-8") as arch:
                 print(arch.read())
-#                eleccion = int(input(f"\n¿Que te gustaria hacer?\n> "))
+                eleccion = int(input(f"\n¿Que te gustaria hacer?\n> "))
         except FileNotFoundError or FileExistsError as err:
             print("ERROR :" + repr(err))
+        else:
+            iniciar_nueva_partida()
 
 
 #    ¡Intenta usar una de estas opciones y observa que ocurre!"""
@@ -116,6 +119,14 @@ def limpiar_pantalla():
     os.system("cls" if os.name == "nt" else "clear")
 
 
+def cambiar_ubicacion():
+    pass
+
+
+def hablar_con_personaje():
+    pass
+
+
 def iniciar_nueva_partida():
     # Usando una partida (camino al .csv) como argumento, crea una copia, apendando X al final del nombre y
     # moviendola a la carpeta de "partidas". Empieza el juego con esa partida y cambia la variable "nivel" a 0
@@ -127,20 +138,5 @@ def continuar_partida():
     # seleccionado, eligiendolo
     pass
 
-
-mapa = {  # Obtener esto de un csv
-    "Celda": {"Sur": "Ateneo", "Norte": "Secreto"},
-    "Secreto": {"Sur": "Celda"},
-    "Ateneo": {"Norte": "Celda", "Este": "Armeria", "Oeste": "Baño"},
-    "Baño": {"Este": "Ateneo"},
-    "Armeria": {"Oeste": "Ateneo", "Sur": "Barracas"},
-    "Barracas": {"Norte": "Armeria"},
-}
-
-ubiacion = ""  # Para decirle al jugador donde estan
-
-inventario = []  # list[str], ayuda a guardar el estado de la partida
-
-nivel = 0  # Guarda el progreso de la historia
 
 menu_principal()
