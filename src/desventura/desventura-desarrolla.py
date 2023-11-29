@@ -4,7 +4,7 @@ def crear_personaje():
     nombre_archivo = nombre.strip().lower().replace(" ", "_")
     linea = 1
     try:
-        with open(f"{nombre_archivo}.csv", "wt", encoding="utf-8") as personaje:
+        with open(f"{nombre_archivo}.csv", "wt", encoding="utf-8-sig") as personaje:
             personaje.write("nombre;opcion;pregunta;respuesta\n")
             interactuar = input("Interaccion inicial (e.j <Hablar con el viejo>): ")
             descripcion = input(

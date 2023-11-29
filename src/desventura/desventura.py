@@ -1,6 +1,5 @@
 import csv
 import os
-
 import rich
 
 
@@ -17,29 +16,29 @@ def menu_principal():
 """
     )
     while True:
-        eleccion = input(f"\n¿Que te gustaria hacer?\n> ")
-        match eleccion:
-            case "1":
-                aceptar = input(f"Desearia ver el tutorial? (Si/No)\n> ")
-                aceptar = aceptar.strip().lower()
-                match aceptar:
-                    case "si":
-                        tutorial()
-                    case "no":
-                        iniciar_nueva_partida()
-                    case _:
-                        print("Opcion invalida")
-                        continue
-            case "2":
-                continuar_partida()
-            case "3":
-                creditos()
-            case "0":
-                print("¡Hasta pronto!")
-                break
-            case _:
-                print("Opcion invalida")
-                continue
+        eleccion = input(f"\n¿Que te gustaria hacer?\n> ").strip().lower()
+        if eleccion == "1":
+            nuevo_juego()
+        elif eleccion == "2":
+            continuar_partida()
+        elif eleccion == "3":
+            creditos()
+        elif eleccion == "4":
+            print("¡Hasta pronto!")
+            break
+        else:
+            print("Opcion invalida")
+
+
+def nuevo_juego():
+    aceptar = input("Desearia ver el tutorial? (Si/No)\n> ").strip().lower()
+    while True:
+        if aceptar == "si":
+            tutorial()
+        elif aceptar == "no":
+            iniciar_nueva_partida()
+        else:
+            print("Opcion invalida")
 
 
 def creditos():
@@ -51,68 +50,8 @@ def creditos():
 
 
 def tutorial():
-    oro = 1
-    pala = 1
-    cuerda = 1
-    puerta = 0
-    ventana = 0
-    norte = 0
-    sur = 0
-    while True:
-        try:
-            with open("TUTORIAL.txt", "rt", encoding="utf-8") as arch:
-                print(arch.read())
-                eleccion = int(input(f"\n¿Que te gustaria hacer?\n> "))
-        except FileNotFoundError or FileExistsError as err:
-            print("ERROR :" + repr(err))
-        else:
-            iniciar_nueva_partida()
-
-
-#    ¡Intenta usar una de estas opciones y observa que ocurre!"""
-#        )
-#    while True:
-#        eleccion_tutorial = input(f"\n¿Que te gustaria hacer?\n> ")
-#        eleccion_tutorial = eleccion_tutorial.lower()
-#        if eleccion_tutorial == "mirar oro" and oro == 1:
-#            print(
-#                r"""
-#                El ORO brilla resplandecientemente. Tienes que esconderlo.
-#                """
-#            )
-#        elif eleccion_tutorial == "mirar oro" and oro == 0:
-#            print(
-#                r"""
-#                El ORO brillo incluso dentro de tus bolsillos. Tienes que esconderlo mejor.
-#                """
-#            )
-#        elif eleccion_tutorial == "agarrar oro" and oro == 1:
-#            oro = 0
-#            print(
-#                r"""
-#                Agarrar el ORO y lo escondes en tu bolsillo.
-#                """
-#            )
-#        elif eleccion_tutorial == "mirar pala" and pala == 1:
-#            print(
-#                r"""
-#                Ves una gran PALA en el piso. Podrias usarla en tu mision.
-#                """
-#            )
-#        elif eleccion_tutorial == "mirar pala" and pala == 0:
-#            print(
-#                r"""
-#                La PALA pesa en tu espalda, pero te sera de ayuda.
-#                """
-#            )
-#        else:
-#            print(
-#                r"""
-#                No puedes hacer eso.
-#                """
-#            )
-#
-#
+    # Esto tendria que leer y usar la carpeta TUTORIAL
+    pass
 
 
 def limpiar_pantalla():
