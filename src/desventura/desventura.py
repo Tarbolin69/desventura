@@ -1,3 +1,4 @@
+# Intentemos usar la libreria CSV para hacer mas simple el leer archivos como diccionarios
 import csv
 import os
 import rich
