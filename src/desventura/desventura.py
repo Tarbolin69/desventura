@@ -1,6 +1,10 @@
 # Intentemos usar la libreria CSV para hacer mas simple el leer archivos como diccionarios
 import csv
+
+# OS es para que funcione bien en Mac, Windows y Linux
 import os
+
+# RICH talvez vamos a usar para que sea mejor la experiencia al escribir
 import rich
 
 
