@@ -5,7 +5,7 @@ def crear_campaña():
     try:
         while True:
             campaña_titulo = input("Como se llamara tu campaña? ").strip()
-            if campaña_titulo:
+            if campaña_titulo and campaña_titulo != "":
                 campaña_titulo = campaña_titulo.lower().replace(" ", "_")
                 break
             print("Debes darle un nombre a tu campaña")
@@ -105,12 +105,20 @@ def crear_objetos(camino, ubicaciones):
                 print("--- Ubicaciones disponibles ---")
                 for ubicacion in ubicaciones:
                     print("\t- " + ubicacion["ubicacion"])
-                locacion = (
-                    input("Ingrese la ubicacion del objeto en el mapa: ")
-                    .strip()
-                    .lower()
-                )
-                descripcion = input("Ingrese la descripcion del objeto: ").strip()
+                while True:
+                    locacion = (
+                        input("Ingrese la ubicacion del objeto en el mapa: ")
+                        .strip()
+                        .title()
+                    )
+                    if any(locacion in _["ubicacion"] for _ in ubicaciones):
+                        break
+                    print("Ingrese una ubicacion valida")
+                while True:
+                    descripcion = input("Ingrese la descripcion del objeto: ").strip()
+                    if descripcion:
+                        break
+                    print("Ingrese una descripcion valida")
                 objetos.write(f"{nombre};{locacion};{descripcion}\n")
     except FileExistsError:
         print("ERROR: <objetos.csv> ya existe")
