@@ -170,6 +170,8 @@ def crear_mapa(camino, lugares):
             mapa.write("ubicacion;estado;adyacentes;texto;items;personajes\n")
             estado = 1
             for lugar in lugares:
+                # falta obtener todos los argumentos requeridos
+                # 2 hay que obtenerlos leyendo archivos
                 mapa.write(mapa_linea(lugar, 0, estado, 0))
                 estado = 0
     except FileExistsError:
