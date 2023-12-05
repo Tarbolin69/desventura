@@ -31,8 +31,24 @@ def nombrar_ubicaciones():
             if descripcion:
                 break
             print("Cada ubicacion necesita una descripcion")
-        lugar = {"ubicacion": ubicacion, "descripcion": descripcion}
+        lugar = {"ubicacion": ubicacion, "descripcion": descripcion, "adyacentes": []}
         ubicaciones.append(lugar)
+    print("--- Es recomendable que toda ubicacion tenga al menos 1 adyacencia ---")
+    for lugar in ubicaciones:
+        print(f"Ubicación actual: {lugar['ubicacion']}")
+        disponibles = [area["ubicacion"] for area in ubicaciones if area != lugar]
+        print(f"Ubicaciones disponibles: {", ".join(disponibles)}")
+        print('Ingresar "ADIOS" si no hay mas adyacencias')
+        for _ in range(len(disponibles)):
+            adyacente = (
+                input(f"Ingrese adyacencia a {lugar["ubicacion"]}: ").strip().title()
+            )
+            if adyacente.lower() == "adios":
+                break
+            if adyacente not in disponibles or adyacente in lugar["adyacentes"]:
+                print("Ingrese una ubicacion existente y que no sea ya adyacente")
+            else:
+                lugar["adyacentes"].append(adyacente)
     return ubicaciones
 
 
@@ -128,8 +144,19 @@ def crear_objetos(camino, ubicaciones):
         print("Los objetos fueron creados correctamente!")
 
 
-def crear_mapa():
-    pass
+def crear_mapa(camino, lugares):
+    archivo_nombre = os.path.join(camino, "mapa.csv")
+    try:
+        with open(archivo_nombre, "wt", encoding="utf-8-sig") as mapa:
+            mapa.write("ubicacion;estado;adyacentes;texto;items;personajes\n")
+            estado = 1
+            for lugar in lugares:
+                mapa.write(f"{lugar["ubicacion"]};{estado}")
+                estado = 0
+    except FileExistsError:
+        print("Ya existe este mapa")
+    except OSError:
+        print("No se ha podido escribir el mapa")
 
 
 def main():
@@ -139,6 +166,7 @@ def main():
     ubicaciones = nombrar_ubicaciones()
     crear_personaje(campaña)
     crear_objetos(campaña, ubicaciones)
+    crear_mapa(campaña, ubicaciones)
 
 
 main()
