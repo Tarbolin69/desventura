@@ -107,6 +107,7 @@ def crear_personaje(camino):
         else:
             print(f"¡{nombre_acomodado} fue creado correctamente!")
         # poner un for que te pregunte en que ubicacion se encuentra cada personaje
+        # mas o menos lo mismo que en los objetos
 
 
 def crear_objetos(camino, ubicaciones):
