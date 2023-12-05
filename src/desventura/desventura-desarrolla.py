@@ -23,7 +23,7 @@ def nombrar_ubicaciones():
     print('\t--- Ingrese "ADIOS" para salir ---')
     print("\t--- La primera ubicacion es el principio de la campaña  ---")
     while True:
-        ubicacion = input("Nombrar una de las ubicaciones: ").strip().title()
+        ubicacion = input("Nombra la ubicacion: ").strip().title()
         if ubicacion.lower() == "adios":
             break
         while True:
@@ -33,12 +33,10 @@ def nombrar_ubicaciones():
             print("Cada ubicacion necesita una descripcion")
         lugar = {"ubicacion": ubicacion, "descripcion": descripcion}
         ubicaciones.append(lugar)
-    for ubica in ubicaciones:
-        print(ubica)
     return ubicaciones
 
 
-def crear_personaje(camino: str):
+def crear_personaje(camino):
     multiples = False
     while True:
         while True:
@@ -104,7 +102,7 @@ def crear_objetos(camino, ubicaciones):
                 nombre = input("Ingrese el nombre del objeto: ").strip().title()
                 if "adios" in nombre.lower():
                     break
-                print("Ubicaciones disponibles:")
+                print("--- Ubicaciones disponibles ---")
                 for ubicacion in ubicaciones:
                     print("\t- " + ubicacion["ubicacion"])
                 locacion = (
@@ -120,6 +118,10 @@ def crear_objetos(camino, ubicaciones):
         print("ERROR: Ha occurrido un problema en el sistema operativo")
     else:
         print("Los objetos fueron creados correctamente!")
+
+
+def crear_mapa():
+    pass
 
 
 def main():
