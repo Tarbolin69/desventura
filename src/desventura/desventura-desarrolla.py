@@ -106,6 +106,7 @@ def crear_personaje(camino):
             print("Ha occurrido un problema en el sistema operativo")
         else:
             print(f"¡{nombre_acomodado} fue creado correctamente!")
+        # poner un for que te pregunte en que ubicacion se encuentra cada personaje
 
 
 def crear_objetos(camino, ubicaciones):
@@ -144,6 +145,23 @@ def crear_objetos(camino, ubicaciones):
         print("Los objetos fueron creados correctamente!")
 
 
+def mapa_linea(lugar, objetos, estado, personajes):
+    ubicacion = lugar["ubicacion"]
+    adyacentes = lugar["adyacentes"]
+    descripcion = lugar["descripcion"]
+    items = []
+    for objeto in objetos:
+        if objeto["locacion"] == ubicacion:
+            items.append(objeto["nombre"])
+    if items == "":
+        items = "NADA"
+    # FALTA ITERAR SOBRE TODOS LOS ARCHIVOS EN LA CARPETA PERSONAJES
+    # Y HACER LO MISMO QUE CON LOS ITEMS
+    # Y PARA HACER HABRIA QUE PREGUNTA EN QUE UBICACION SE ENCUENTRAN
+    # COMO SE HACE CON LOS ITEMS
+    return f"{lugar};{estado};{adyacentes};{descripcion};{items};personajes"
+
+
 def crear_mapa(camino, lugares):
     archivo_nombre = os.path.join(camino, "mapa.csv")
     try:
@@ -151,7 +169,7 @@ def crear_mapa(camino, lugares):
             mapa.write("ubicacion;estado;adyacentes;texto;items;personajes\n")
             estado = 1
             for lugar in lugares:
-                mapa.write(f"{lugar["ubicacion"]};{estado}")
+                mapa.write(mapa_linea(lugar, 0, estado, 0))
                 estado = 0
     except FileExistsError:
         print("Ya existe este mapa")
