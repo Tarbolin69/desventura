@@ -14,14 +14,18 @@ Imaginemos lo siguiente:
           _____,....-----'------'-----''-------'---'----'--
 ~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~
 
-Te encuentras solo en una cabaña, en un bosque, en el medio de la noche. Al
-NORTE hay una PUERTA y una VENTANA. En la esquina de la cabaña puedes ver una
-PALA, una CUERDA y ORO. Tienes que esconder el ORO antes de que algo malo ocurra.
+
+Te encuntras en una cabaña, en un gran y dense bosque de la elada tundra
+siberica. No recuerdas un tiempo en donde no hayas estado aqui. Aparte de
+la sala principal, tienes un Baño, un Sotano, y un Patio. Todos estan conectados
+a esta sala principal. 
+
+No ves nada de uso en la sala principal.
 
 Las opciones a tu disposición en Desventura son las siguientes:
     * Mirar <objeto>: Te da la descripción de un objeto o sobre donde estas
     * Agarrar <objeto>: Te permite poner un objeto en tu inventario
     * Usar <objeto>: Usa uno de tus objetos
-    * Ir <objeto/dirección>: Vas hacia un objeto o dirección
+    * Ir <locacion>: Vas hacia una locacion adyacenta a donde estas
 
 ¡Intenta usar una de estas opciones y observa que ocurre!

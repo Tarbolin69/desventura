@@ -1,7 +1,5 @@
-# Intentemos usar la libreria CSV para hacer mas simple el leer archivos como diccionarios
 import csv
-
-# OS es para que funcione bien en Mac, Windows y Linux
+import time
 import os
 
 
@@ -18,7 +16,7 @@ def menu_principal():
 """
     )
     while True:
-        eleccion = input(f"\n¿Que te gustaria hacer?\n> ").strip().lower()
+        eleccion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
         if eleccion == "1":
             nuevo_juego()
         elif eleccion == "2":
@@ -33,10 +31,11 @@ def menu_principal():
 
 
 def nuevo_juego():
-    aceptar = input("Desearia ver el tutorial? (Si/No)\n> ").strip().lower()
     while True:
+        aceptar = input("Desearia ver el tutorial? (Si/No)\n> ").strip().lower()
         if aceptar == "si":
             tutorial()
+            break
         elif aceptar == "no":
             iniciar_nueva_partida()
         else:
@@ -51,10 +50,55 @@ def creditos():
         print("ERROR: " + repr(err))
 
 
+def print_lento(texto):
+    for letra in texto:
+        print(letra, end="")
+        # sys.stdout.write(letra)
+        time.sleep(0.0001)
+
+
+def archivo_a_dict(camino):
+    try:
+        with open(camino, "rt", encoding="utf-8-sig") as archivo:
+            csv_dict = csv.DictReader(archivo, delimiter=";")
+            return list(csv_dict)
+    except Exception:
+        print("El archivo no pudo ser leido")
+        return
+
+
+def archivo_a_txt(camino):
+    try:
+        with open(camino, "rt", encoding="utf-8-sig") as archivo:
+            archivo_leido = archivo.read()
+    except Exception:
+        print("El archivo no pudo ser leido")
+        return
+    else:
+        return archivo_leido
+
+
+def juego(mapa, objetos):
+    inventario = []
+    while True:
+        pass
+
+
 def tutorial():
-    # Esto tendria que leer y usar la carpeta TUTORIAL
+    camino = os.path.join("historias", "venturas_en_holand")
+    intro_archivo = os.path.join(camino, "INICIO.txt")
+    intro_mapa = os.path.join(camino, "mapa.csv")
+    intro_objetos = os.path.join(camino, "objetos.csv")
+    dict_objetos = archivo_a_dict(intro_objetos)
+    dict_mapa = archivo_a_dict(intro_mapa)
+    print_lento(archivo_a_txt(intro_archivo))
+    juego(dict_mapa, dict_objetos)
+
+
+def inicializar_partida_locacion():
     pass
 
+def describir_locacion(mapa)
 
 def limpiar_pantalla():
     os.system("cls" if os.name == "nt" else "clear")
