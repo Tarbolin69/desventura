@@ -13,7 +13,20 @@ def crear_campaña():
         os.makedirs(campaña_carpeta)
     except OSError:
         print("Ha ocurrido un error al crear la carpeta")
+    try:
+        while True:
+            campaña_titulo = input("Como se llamara tu campaña? ").strip()
+            if campaña_titulo and campaña_titulo != "":
+                campaña_titulo = campaña_titulo.lower().replace(" ", "_")
+                break
+            print("Debes darle un nombre a tu campaña")
+        campaña_carpeta = os.path.join("historias", campaña_titulo)
+        os.makedirs(campaña_carpeta)
+    except OSError:
+        print("Ha ocurrido un error al crear la carpeta")
         return
+    else:
+        return campaña_carpeta
     else:
         return campaña_carpeta
 
@@ -22,7 +35,9 @@ def nombrar_ubicaciones():
     ubicaciones = []
     print('\t--- Ingrese "ADIOS" para salir ---')
     print("\t--- La primera ubicacion es el principio de la campaña  ---")
+    print("\t--- La primera ubicacion es el principio de la campaña  ---")
     while True:
+        ubicacion = input("Nombra la ubicacion: ").strip().title()
         ubicacion = input("Nombra la ubicacion: ").strip().title()
         if ubicacion.lower() == "adios":
             break
@@ -114,14 +129,16 @@ def crear_personaje(camino):
 
 
     
-def crear_objetos(campaña, ubicaciones):
+def crear_objetoss(campaña, ubicaciones, ubicaciones):
     archivo_nombre = os.path.join(campaña, "objetos.csv")
     try:
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as objetos:
             objetos.write("nombre;locacion;descripción\n")
             while True:
                 print('Para cancelar la carga ingrese "ADIOS".')
+                print('Para cancelar la carga ingrese "ADIOS".')
                 nombre = input("Ingrese el nombre del objeto: ").strip().title()
+                if "adios" in nombre.lower():
                 if "adios" in nombre.lower():
                     break
                 print("--- Ubicaciones disponibles ---")
@@ -141,7 +158,26 @@ def crear_objetos(campaña, ubicaciones):
                     if descripcion:
                         break
                     print("Ingrese una descripcion valida")
+                print("--- Ubicaciones disponibles ---")
+                for ubicacion in ubicaciones:
+                    print("\t- " + ubicacion["ubicacion"])
+                while True:
+                    locacion = (
+                        input("Ingrese la ubicacion del objeto en el mapa: ")
+                        .strip()
+                        .title()
+                    )
+                    if any(locacion in _["ubicacion"] for _ in ubicaciones):
+                        break
+                    print("Ingrese una ubicacion valida")
+                while True:
+                    descripcion = input("Ingrese la descripcion del objeto: ").strip()
+                    if descripcion:
+                        break
+                    print("Ingrese una descripcion valida")
                 objetos.write(f"{nombre};{locacion};{descripcion}\n")
+    except FileExistsError:
+        print("ERROR: <objetos.csv> ya existe")
     except FileExistsError:
         print("ERROR: <objetos.csv> ya existe")
     except OSError:
@@ -205,7 +241,10 @@ def main():
     if not campaña:
         return
     ubicaciones = nombrar_ubicaciones()
+    ubicaciones = nombrar_ubicaciones()
     crear_personaje(campaña)
+    crear_objetos(campaña, ubicaciones)
+    crear_mapa(campaña, ubicaciones)
     crear_objetos(campaña, ubicaciones)
     crear_mapa(campaña, ubicaciones)
 
