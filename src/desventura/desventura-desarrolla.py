@@ -240,23 +240,12 @@ def crear_mapa(camino, lugares):
 
 
 def main():
-    # campaña = crear_campaña()
-    campaña = ".\\historias\\venturas_en_holand"
+    campaña = crear_campaña()
     if not campaña:
         return
-    # ubicaciones = nombrar_ubicaciones()
-    ubicaciones = [
-        {
-            "ubicacion": "Cabaña",
-            "descripcion": "Una cabaña",
-            "adyacentes": ["Patio", "Baño", "Sotano"],
-        },
-        {"ubicacion": "Patio", "descripcion": "Un patio", "adyacentes": ["Cabaña"]},
-        {"ubicacion": "Baño", "descripcion": "Un baño", "adyacentes": ["Cabaña"]},
-        {"ubicacion": "Sotano", "descripcion": "Un sotano", "adyacentes": ["Cabaña"]},
-    ]
-    # crear_personaje(campaña)
-    # crear_objetos(campaña, ubicaciones)
+    ubicaciones = nombrar_ubicaciones()
+    crear_personaje(campaña)
+    crear_objetos(campaña, ubicaciones)
     crear_mapa(campaña, ubicaciones)
 
 
