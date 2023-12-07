@@ -4,9 +4,6 @@ import csv
 # OS es para que funcione bien en Mac, Windows y Linux
 import os
 
-# RICH talvez vamos a usar para que sea mejor la experiencia al escribir
-import rich
-
 
 def menu_principal():
     print(
