@@ -1,1 +1,5 @@
 ﻿ubicacion;estado;adyacentes;texto;items;personajes
+Cabaña;1;['Patio', 'Baño', 'Sotano'];Una cabaña;[];agujero.csv
+Patio;0;['Cabaña'];Un patio;['Moneda De Oro'];NADIE
+Baño;0;['Cabaña'];Un baño;[];NADIE
+Sotano;0;['Cabaña'];Un sotano;['.Armadura'];NADIE

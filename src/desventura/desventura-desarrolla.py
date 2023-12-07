@@ -179,7 +179,19 @@ def mapa_linea(lugar, objetos: dict, estado: int, personajes):
             items.append(objeto["nombre"])
     if items == "":
         items = "NADA"
-    return f"{lugar};{estado};{adyacentes};{descripcion};{items};{personajes}"
+    if not personajes:
+        personajes = "NADIE"
+    return f"{ubicacion};{estado};{adyacentes};{descripcion};{items};{personajes}\n"
+
+
+def leer_objetos(archivo):
+    try:
+        with open(archivo, "rt", encoding="utf-8-sig") as ob:
+            objetos = csv.DictReader(ob, delimiter=";")
+            return list(objetos)
+    except Exception:
+        print("Ocurrio un error al intentar leer objetos")
+        return []
 
 
 def crear_mapa(camino, lugares):
@@ -189,6 +201,7 @@ def crear_mapa(camino, lugares):
     archivo_nombre = os.path.join(camino, "mapa.csv")
     camino_archivo = os.path.join(camino, "personajes")  # No se si esta bien asi xd
     archivo_objetos = os.path.join(camino, "objetos.csv")  # No se si esta bien asi xd
+    objetos = leer_objetos(archivo_objetos)
     lista_personajes = os.listdir(camino_archivo)
     try:
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as mapa:
@@ -214,12 +227,10 @@ def crear_mapa(camino, lugares):
                         in lista_personajes
                         and personaje_eleccion not in personajes
                     ):
-                        personajes.append(personaje.strip().title())
+                        personajes.append(personaje.strip())
                         print("Personaje añadido!")
                     else:
                         print("Ese personaje no existe o esta repetido")
-                with open(archivo_objetos, "rt", encoding="utf-8-sig") as ob:
-                    objetos = csv.DictReader(ob)
                 mapa.write(mapa_linea(lugar, objetos, estado, ",".join(personajes)))
                 estado = 0
     except FileExistsError:
@@ -229,12 +240,23 @@ def crear_mapa(camino, lugares):
 
 
 def main():
-    campaña = crear_campaña()
+    # campaña = crear_campaña()
+    campaña = ".\\historias\\venturas_en_holand"
     if not campaña:
         return
-    ubicaciones = nombrar_ubicaciones()
-    crear_personaje(campaña)
-    crear_objetos(campaña, ubicaciones)
+    # ubicaciones = nombrar_ubicaciones()
+    ubicaciones = [
+        {
+            "ubicacion": "Cabaña",
+            "descripcion": "Una cabaña",
+            "adyacentes": ["Patio", "Baño", "Sotano"],
+        },
+        {"ubicacion": "Patio", "descripcion": "Un patio", "adyacentes": ["Cabaña"]},
+        {"ubicacion": "Baño", "descripcion": "Un baño", "adyacentes": ["Cabaña"]},
+        {"ubicacion": "Sotano", "descripcion": "Un sotano", "adyacentes": ["Cabaña"]},
+    ]
+    # crear_personaje(campaña)
+    # crear_objetos(campaña, ubicaciones)
     crear_mapa(campaña, ubicaciones)
 
 
