@@ -1,4 +1,10 @@
 import os
+import csv
+import shutil
+
+
+def print_centro(texto: str):
+    print(texto.center(shutil.get_terminal_size().columns))
 
 
 def crear_campaña():
@@ -19,9 +25,12 @@ def crear_campaña():
 
 
 def nombrar_ubicaciones():
+    # Habria que designar una ubicacion con estado "2" que sea el final
+    # Tal vez requiera que uses un item (uno de los secretos)
+    # Y habria que pedir al final de crear_mapa() un texto que aparezca cuando ganas
     ubicaciones = []
-    print('\t--- Ingrese "ADIOS" para salir ---')
-    print("\t--- La primera ubicacion es el principio de la campaña  ---")
+    print_centro('--- Ingrese al nombrar una ubicacion "ADIOS" para salir ---')
+    print_centro("--- La primera ubicacion es el principio de la campaña  ---")
     while True:
         ubicacion = input("Nombra la ubicacion: ").strip().title()
         if ubicacion.lower() == "adios":
@@ -33,15 +42,19 @@ def nombrar_ubicaciones():
             print("Cada ubicacion necesita una descripcion")
         lugar = {"ubicacion": ubicacion, "descripcion": descripcion, "adyacentes": []}
         ubicaciones.append(lugar)
-    print("--- Es recomendable que toda ubicacion tenga al menos 1 adyacencia ---")
+    print_centro(
+        "--- Es recomendable que toda ubicacion tenga al menos 1 adyacencia ---"
+    )
     for lugar in ubicaciones:
         print(f"Ubicación actual: {lugar['ubicacion']}")
         disponibles = [area["ubicacion"] for area in ubicaciones if area != lugar]
-        print(f"Ubicaciones disponibles: {','.join(disponibles)}")
+        print(f"Ubicaciones disponibles: {', '.join(disponibles)}")
         print('Ingresar "ADIOS" si no hay mas adyacencias')
         for _ in range(len(disponibles)):
             adyacente = (
-                input(f"Ingrese adyacencia a {lugar['ubicacion']}: ").strip().title()
+                input(f"Ingrese una adyacencia a {lugar['ubicacion']}: ")
+                .strip()
+                .title()
             )
             if adyacente.lower() == "adios":
                 break
@@ -78,7 +91,7 @@ def crear_personaje(camino):
         try:
             with open(archivo_nombre, "wt", encoding="utf-8-sig") as personaje:
                 personaje.write("nombre;opcion;pregunta;respuesta\n")
-                interactuar = input("Interaccion inicial (e.j <Hablar con el viejo>): ")
+                interactuar = input("Interaccion inicial (e.j <Te acercas al viejo>): ")
                 descripcion = input(
                     "Ingresa el texto que aparecera cuando se interactua con tu personaje: "
                 )
@@ -100,8 +113,10 @@ def crear_personaje(camino):
                 adios = input(
                     'Que dice tu personaje como despedida? (e.j <"Espero que te coman los perros">): '
                 )
+                print(
+                    "Si quieres que tu personaje tengo una imagen, añade un archivo .txt con el mismo nombre en la carpeta de personajes"
+                )
                 personaje.write(f"{nombre_acomodado};{linea};{salir};{adios}\n")
-
         except FileExistsError:
             print("ERROR: Este personaje ya existe.")
         except OSError:
@@ -113,6 +128,12 @@ def crear_personaje(camino):
 
 
 def crear_objetos(campaña, ubicaciones):
+    # Objetos secretos que empiezas con .
+    # O que tengan dos nombres separados por .
+    # Pared.Armadura
+    # Y no son listados como los otros
+    # Y tenes que hacer algo como "agarrar PARED" para obtener el item Armadura
+    # Usados para ganar el juego?
     archivo_nombre = os.path.join(campaña, "objetos.csv")
     try:
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as objetos:
@@ -122,7 +143,7 @@ def crear_objetos(campaña, ubicaciones):
                 nombre = input("Ingrese el nombre del objeto: ").strip().title()
                 if nombre.lower() == "adios":
                     break
-                print("--- Ubicaciones disponibles ---")
+                print_centro("--- Ubicaciones disponibles ---")
                 for ubicacion in ubicaciones:
                     print("\t- " + ubicacion["ubicacion"])
                 while True:
@@ -148,7 +169,7 @@ def crear_objetos(campaña, ubicaciones):
         print("Los objetos fueron creados correctamente!")
 
 
-def mapa_linea(lugar, objetos, estado, personajes):
+def mapa_linea(lugar, objetos: dict, estado: int, personajes):
     ubicacion = lugar["ubicacion"]
     adyacentes = lugar["adyacentes"]
     descripcion = lugar["descripcion"]
@@ -162,6 +183,9 @@ def mapa_linea(lugar, objetos, estado, personajes):
 
 
 def crear_mapa(camino, lugares):
+    # Quiza pedir otra seccion con texto si se usa un item en ese lugar
+    # tipo "item-uso;item-texto"
+    # los que no tengan nada solo tienen "NADA" en las dos secciones
     archivo_nombre = os.path.join(camino, "mapa.csv")
     camino_archivo = os.path.join(camino, "personajes")  # No se si esta bien asi xd
     archivo_objetos = os.path.join(camino, "objetos.csv")  # No se si esta bien asi xd
@@ -174,23 +198,28 @@ def crear_mapa(camino, lugares):
                 # falta obtener todos los argumentos requeridos
                 # 2 hay que obtenerlos leyendo archivos
                 personajes = []
-                print(*lista_personajes)
+                print_centro("--- Personajes disponibles ---")
+                print_centro('--- Ingrese "ADIOS" para salir ---')
+                for personaje in lista_personajes:
+                    personaje_arreglado = personaje[:-4].replace("_", " ").title()
+                    print(f"\t- {personaje_arreglado}")
                 while True:
-                    personaje = input(
-                        f"Ingrese el nombre de el personaje que se encuentra en {lugar['ubicacion']}"
+                    personaje_eleccion = input(
+                        f"Ingrese el nombre de un personaje que se encuentra en {lugar['ubicacion']}: "
                     )
-                    if (
-                        personaje.strip().lower().replace(" ", "_") + ".csv"
+                    if personaje_eleccion.strip().lower() == "adios":
+                        break
+                    elif (
+                        personaje_eleccion.strip().lower().replace(" ", "_") + ".csv"
                         in lista_personajes
-                        and personaje not in personajes
+                        and personaje_eleccion not in personajes
                     ):
                         personajes.append(personaje.strip().title())
-                    elif personaje == "":
-                        break
+                        print("Personaje añadido!")
                     else:
                         print("Ese personaje no existe o esta repetido")
                 with open(archivo_objetos, "rt", encoding="utf-8-sig") as ob:
-                    objetos = [x.rstrip().split(";") for x in ob]
+                    objetos = csv.DictReader(ob)
                 mapa.write(mapa_linea(lugar, objetos, estado, ",".join(personajes)))
                 estado = 0
     except FileExistsError:
