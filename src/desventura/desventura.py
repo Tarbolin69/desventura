@@ -87,7 +87,7 @@ def mirar(objetivo: str):
     print(f"Miras {objetivo}")
 
 
-def agarrar(objetivo: str, mapa: list, objetos: list[dict]):
+def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
     objetivo = objetivo.title()
     for locacion in mapa:
         items_posibles = ast.literal_eval(locacion["items"])
@@ -99,12 +99,14 @@ def agarrar(objetivo: str, mapa: list, objetos: list[dict]):
             for i, objeto in enumerate(objetos):
                 if objeto["nombre"] == objetivo:
                     item = objetos.pop(i)
-                    ast.literal_eval(locacion["items"]).remove(objetivo)
-                    print("PIOLA")
+                    locacion["items"] = locacion["items"].replace(objetivo, " ")
+                    print(f"Obtuviste {objetivo}")
                     return item
+    print(f"No puedes agarrar {objetivo}")
+    print()
 
 
-def usar(objetivo: str, mapa):
+def usar(objetivo: str, inventario, mapa):
     pass
 
 
@@ -167,7 +169,7 @@ def acciones(accion, mapa, objetos, camino):
             if agarrado:
                 inventario.append(agarrado)
         case "usar":
-            usar(objetivo)
+            usar(objetivo, inventario, mapa)
         case "hablar":
             hablar(objetivo, mapa, camino)
         case "ir":
@@ -193,7 +195,7 @@ def describir_locacion(mapa):
             for adyacente in adyacentes:
                 print(f"- {adyacente}")
             print()
-            if items:
+            if items and items[0] != " ":
                 print(f"En {locacion['ubicacion']} puedes ver:")
                 for item in items:
                     print(f"- {item}")
