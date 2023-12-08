@@ -19,17 +19,17 @@ def menu_principal():
     )
     while True:
         eleccion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        if eleccion == "1":
-            nuevo_juego()
-        elif eleccion == "2":
-            continuar_partida()
-        elif eleccion == "3":
-            creditos()
-        elif eleccion == "0":
-            print("¡Hasta pronto!")
-            break
-        else:
-            print("Opcion invalida")
+        match eleccion:
+            case "1":
+                nuevo_juego()
+            case "2":
+                continuar_partida()
+            case "3":
+                creditos()
+            case "0":
+                print("¡Hasta pronto!")
+            case _:
+                print("Opcion invalida")
 
 
 def nuevo_juego():
@@ -39,7 +39,7 @@ def nuevo_juego():
             iniciar_nueva_partida("venturas_en_holand")
             break
         elif aceptar == "no":
-            campaña = elegir_campaña()
+            campaña = elegir_campaña("historias")
             iniciar_nueva_partida(campaña)
             break
         else:
@@ -146,9 +146,25 @@ def hablar_con_personaje(camino: str, personaje: str):
         print_acomodado(dialogos[int(opcion) + 1][3])
 
 
-def ir(objetivo: str, mapa):
-    describir_locacion(mapa)
-    print(f"Vas a {objetivo}")
+def ir(objetivo: str, mapa: list[dict]):
+    objetivo_locacion = objetivo.title()
+    inicio = dict
+    for locacion in mapa:
+        if locacion["estado"] == "1":
+            inicio = locacion
+            break
+    if locacion["ubicacion"] == objetivo_locacion:
+        print(f"Ya te encuentras en {objetivo_locacion}")
+        return
+    for locacion in mapa:
+        if locacion["ubicacion"] == objetivo_locacion:
+            inicio["estado"] = "0"
+            locacion["estado"] = "1"
+            print(f"Has ido a {objetivo_locacion}")
+            print()
+            describir_locacion(mapa)
+            return
+    print(f"No puedes ir a {objetivo_locacion}")
 
 
 def acciones(accion, mapa, objetos, camino):
@@ -226,12 +242,18 @@ def iniciar_nueva_partida(campaña):
     juego(dict_mapa, dict_objetos, camino)
 
 
-def elegir_campaña():
-    lista_directorios = os.listdir("historias")
+def continuar_partida():
+    # Elige una de las partidas en "partidas", remueva todas las "X" de los otros archivos, y la pasa a el archivo
+    # seleccionado, eligiendolo
+    pass
+
+
+def elegir_campaña(carpeta):
+    lista_directorios = os.listdir(carpeta)
     while True:
-        print("Campañas:")
+        print("Campañas Disponibles:")
         for x, y in enumerate(lista_directorios):
-            print(x + 1, "-", y)
+            print(x + 1, "-", y.replace("_", " ").title())
         campaña = input("Seleccione una campaña: ")
         if campaña in [str(x + 1) for x, _ in enumerate(lista_directorios)]:
             break
@@ -242,12 +264,6 @@ def elegir_campaña():
 
 def guardar_partida():
     quit()
-
-
-def continuar_partida():
-    # Elige una de las partidas en "partidas", remueva todas las "X" de los otros archivos, y la pasa a el archivo
-    # seleccionado, eligiendolo
-    pass
 
 
 menu_principal()
