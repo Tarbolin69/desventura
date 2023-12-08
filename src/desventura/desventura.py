@@ -87,12 +87,20 @@ def mirar(objetivo: str):
     print(f"Miras {objetivo}")
 
 
-def agarrar(objetivo: str):
-    print(f"Agarras {objetivo}")
+def agarrar(objetivo: str, mapa: list, objetos: list[dict]):
+    for locacion in mapa:
+        if locacion["estado"] == "1" and objetivo in locacion["items"]:
+            for i, objeto in enumerate(objetos):
+                if objeto["nombre"].lower() == objetivo:
+                    item = objetos.pop(i)
+                    locacion["items"].remove(objetivo)
+                    return item
+        break
+    print(f"No puedes agarrar {objetivo}")
 
 
-def usar(objetivo: str):
-    print(f"Usas {objetivo}")
+def usar(objetivo: str, mapa):
+    pass
 
 
 def hablar(objetivo: str, mapa, camino):
@@ -109,9 +117,9 @@ def hablar_con_personaje(camino: str, personaje: str):
     ruta = os.path.join(camino, "personajes", personaje)
     with open(ruta, "rt", encoding="utf-8-sig") as renglones:
         dialogos = [x.rstrip().split(";") for x in renglones]
-        print_acomodado(f"Tu: {dialogos[1][2]}")
+        print_acomodado(dialogos[1][2])
         time.sleep(1)
-        print_acomodado(f"{personaje_nombre}: {dialogos[1][3]}")
+        print_acomodado(dialogos[1][3])
         print()
         cant = [str(x + 1) for x, _ in enumerate(dialogos[2:])]
         while True:
@@ -126,9 +134,9 @@ def hablar_con_personaje(camino: str, personaje: str):
                 print_acomodado(dialogos[int(opcion) + 1][3])
                 print()
         print()
-        print_acomodado(f"Tu: {dialogos[int(opcion) + 1][2]}")
+        print_acomodado(dialogos[int(opcion) + 1][2])
         time.sleep(1)
-        print_acomodado(f"{personaje_nombre}: {dialogos[int(opcion) + 1][3]}")
+        print_acomodado(dialogos[int(opcion) + 1][3])
 
 
 def ir(objetivo: str, mapa):
@@ -136,7 +144,8 @@ def ir(objetivo: str, mapa):
     print(f"Vas a {objetivo}")
 
 
-def acciones(accion, mapa, inventario, objetos, camino):
+def acciones(accion, mapa, objetos, camino):
+    inventario = []
     if not accion:
         print()
         print("Ingrese una opcion valida")
@@ -148,7 +157,9 @@ def acciones(accion, mapa, inventario, objetos, camino):
         case "mirar":
             mirar(objetivo)
         case "agarrar":
-            agarrar(objetivo)
+            agarrado = agarrar(objetivo, mapa, objetos)
+            if agarrado:
+                inventario.append(agarrado)
         case "usar":
             usar(objetivo)
         case "hablar":
@@ -166,7 +177,6 @@ def print_acomodado(texto):
 
 
 def describir_locacion(mapa):
-    print()
     for locacion in mapa:
         if locacion["estado"] == "1":
             adyacentes = ast.literal_eval(locacion["adyacentes"])
@@ -178,7 +188,7 @@ def describir_locacion(mapa):
                 print(f"- {adyacente}")
             print()
             if items:
-                print(f"En {locacion} puedes ver:")
+                print(f"En {locacion['ubicacion']} puedes ver:")
                 for item in items:
                     print(f"- {item}")
                 break
@@ -186,11 +196,10 @@ def describir_locacion(mapa):
 
 
 def juego(mapa, objetos, camino):
-    inventario = []
     describir_locacion(mapa)
     while True:
         accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        acciones(accion, mapa, inventario, objetos, camino)
+        acciones(accion, mapa, objetos, camino)
 
 
 def limpiar_pantalla():
@@ -204,6 +213,7 @@ def iniciar_nueva_partida(campaña):
     intro_objetos = os.path.join(camino, "objetos.csv")
     dict_objetos = archivo_a_dict(intro_objetos)
     dict_mapa = archivo_a_dict(intro_mapa)
+    limpiar_pantalla()
     print_lento(archivo_a_txt(intro_archivo))
     juego(dict_mapa, dict_objetos, camino)
 
