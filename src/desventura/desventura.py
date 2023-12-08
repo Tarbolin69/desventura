@@ -104,13 +104,14 @@ def hablar(objetivo: str, mapa, camino):
     print(f"No puedes hablar con {objetivo}")
 
 
-def hablar_con_personaje(camino, personaje):
+def hablar_con_personaje(camino: str, personaje: str):
+    personaje_nombre = personaje[:-4].title()
     ruta = os.path.join(camino, "personajes", personaje)
     with open(ruta, "rt", encoding="utf-8-sig") as renglones:
         dialogos = [x.rstrip().split(";") for x in renglones]
-        print_acomodado(dialogos[1][2])
+        print_acomodado(f"Tu: {dialogos[1][2]}")
         time.sleep(1)
-        print_acomodado(dialogos[1][3])
+        print_acomodado(f"{personaje_nombre}: {dialogos[1][3]}")
         print()
         cant = [str(x + 1) for x, _ in enumerate(dialogos[2:])]
         while True:
@@ -125,9 +126,9 @@ def hablar_con_personaje(camino, personaje):
                 print_acomodado(dialogos[int(opcion) + 1][3])
                 print()
         print()
-        print_acomodado(dialogos[int(opcion) + 1][2])
+        print_acomodado(f"Tu: {dialogos[int(opcion) + 1][2]}")
         time.sleep(1)
-        print_acomodado(dialogos[int(opcion) + 1][3])
+        print_acomodado(f"{personaje_nombre}: {dialogos[int(opcion) + 1][3]}")
 
 
 def ir(objetivo: str, mapa):
