@@ -36,10 +36,12 @@ def nuevo_juego():
     while True:
         aceptar = input("Desearia ver el tutorial? (Si/No)\n> ").strip().lower()
         if aceptar == "si":
-            tutorial()
+            iniciar_nueva_partida("venturas_en_holand")
             break
         elif aceptar == "no":
-            iniciar_nueva_partida()
+            campaña = elegir_campaña()
+            iniciar_nueva_partida(campaña)
+            break
         else:
             print("Opcion invalida")
 
@@ -93,73 +95,15 @@ def usar(objetivo: str):
     print(f"Usas {objetivo}")
 
 
-def ir(objetivo: str):
-    print(f"Vas a {objetivo}")
-
-
-def acciones(accion, mapa, inventario, objetos):
-    if not accion:
-        print()
-        print("Ingrese una opcion valida")
-        return
-    print()
-    objetivo = accion.strip().lower().split()[-1]
-    accion = accion.strip().lower().split()[0]
-    match accion:
-        case "mirar":
-            mirar(objetivo)
-        case "agarrar":
-            agarrar(objetivo)
-        case "usar":
-            usar(objetivo)
-        case "ir":
-            ir(objetivo)
-        case _:
-            print("Esa no es una opcion valida")
-
-
-def juego(mapa, objetos):
-    inventario = []
-    while True:
-        describir_locacion(mapa)
-        accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        acciones(accion, mapa, inventario, objetos)
-
-
-def tutorial():
-    camino = os.path.join("historias", "venturas_en_holand")
-    intro_archivo = os.path.join(camino, "INICIO.txt")
-    intro_mapa = os.path.join(camino, "mapa.csv")
-    intro_objetos = os.path.join(camino, "objetos.csv")
-    dict_objetos = archivo_a_dict(intro_objetos)
-    dict_mapa = archivo_a_dict(intro_mapa)
-    print_lento(archivo_a_txt(intro_archivo))
-    juego(dict_mapa, dict_objetos)
-
-
-def inicializar_partida_locacion():
-    pass
-
-
-def describir_locacion(mapa):
-    print()
+def hablar(objetivo: str, mapa):
+    personaje = objetivo.strip().lower() + ".csv"
     for locacion in mapa:
         if locacion["estado"] == "1":
-            print(textwrap.fill(locacion["texto"], 80))
-            print()
-            for adyacente in ast.literal_eval(locacion["adyacentes"]):
-                print(f"- {adyacente}")
-    print("Las habitaciones adyacentes son:")
-
-    print()
-
-
-def limpiar_pantalla():
-    os.system("cls" if os.name == "nt" else "clear")
-
-
-def cambiar_ubicacion():
-    pass
+            if objetivo.strip().lower() + ".csv" == locacion["personajes"]:
+                print(f"Hola, agujero!")
+            else:
+                print("No hay nadie aca")
+    print(f"Hablas con {objetivo}")
 
 
 def hablar_con_personaje(camino):
@@ -183,13 +127,96 @@ def hablar_con_personaje(camino):
         print(dialogos[int(opcion) + 1][2])
         time.sleep(1)
         print(dialogos[int(opcion) + 1][3])
-    return
 
 
-def iniciar_nueva_partida():
-    # Usando una partida (camino al .csv) como argumento, crea una copia, apendando X al final del nombre y
-    # moviendola a la carpeta de "partidas". Empieza el juego con esa partida y cambia la variable "nivel" a 0
-    pass
+def ir(objetivo: str, mapa):
+    print(f"Vas a {objetivo}")
+
+
+def acciones(accion, mapa, inventario, objetos):
+    if not accion:
+        print()
+        print("Ingrese una opcion valida")
+        return
+    print()
+    objetivo = accion.strip().lower().split()[-1]
+    accion = accion.strip().lower().split()[0]
+    match accion:
+        case "mirar":
+            mirar(objetivo)
+        case "agarrar":
+            agarrar(objetivo)
+        case "usar":
+            usar(objetivo)
+        case "hablar":
+            hablar(objetivo, mapa)
+        case "ir":
+            ir(objetivo, mapa)
+        case "salir":
+            guardar_partida()
+        case _:
+            print("Esa no es una opcion valida")
+
+
+def describir_locacion(mapa):
+    print()
+    for locacion in mapa:
+        if locacion["estado"] == "1":
+            adyacentes = ast.literal_eval(locacion["adyacentes"])
+            items = ast.literal_eval(locacion["items"])
+            print(textwrap.fill(locacion["texto"], 80))
+            print()
+            print("Las habitaciones adyacentes son:")
+            for adyacente in adyacentes:
+                print(f"- {adyacente}")
+            print()
+            if items:
+                print(f"En {locacion} puedes ver:")
+                for item in items:
+                    print(f"- {item}")
+                break
+            print("No ves nada de uso en este lugar")
+
+
+def juego(mapa, objetos):
+    inventario = []
+    while True:
+        describir_locacion(mapa)
+        accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
+        acciones(accion, mapa, inventario, objetos)
+
+
+def limpiar_pantalla():
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+def iniciar_nueva_partida(campaña):
+    camino = os.path.join("historias", campaña)
+    intro_archivo = os.path.join(camino, "INICIO.txt")
+    intro_mapa = os.path.join(camino, "mapa.csv")
+    intro_objetos = os.path.join(camino, "objetos.csv")
+    dict_objetos = archivo_a_dict(intro_objetos)
+    dict_mapa = archivo_a_dict(intro_mapa)
+    print_lento(archivo_a_txt(intro_archivo))
+    juego(dict_mapa, dict_objetos)
+
+
+def elegir_campaña():
+    lista_directorios = os.listdir("historias")
+    while True:
+        print("Campañas:")
+        for x, y in enumerate(lista_directorios):
+            print(x + 1, "-", y)
+        campaña = input("Seleccione una campaña: ")
+        if campaña in [str(x + 1) for x, _ in enumerate(lista_directorios)]:
+            break
+        print("Fuera de rango.")
+    nombre_directorio = str(lista_directorios[int(campaña) - 1])
+    return os.path.join(nombre_directorio)
+
+
+def guardar_partida():
+    quit()
 
 
 def continuar_partida():

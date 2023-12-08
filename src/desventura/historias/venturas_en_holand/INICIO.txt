@@ -24,8 +24,11 @@ No ves nada de uso en la sala principal.
 
 Las opciones a tu disposición en Desventura son las siguientes:
     * Mirar <objeto>: Te da la descripción de un objeto o sobre donde estas
+    * Hablar <personaje>: Te permite hablar con un personaje en la locacion actual
     * Agarrar <objeto>: Te permite poner un objeto en tu inventario
     * Usar <objeto>: Usa uno de tus objetos
     * Ir <locacion>: Vas hacia una locacion adyacenta a donde estas
+
+Tambien puedes usar "SALIR" para guardar la partida y salir del programa.
 
 ¡Intenta usar una de estas opciones y observa que ocurre!
