@@ -169,7 +169,7 @@ def crear_objetos(campaña, ubicaciones):
         print("Los objetos fueron creados correctamente!")
 
 
-def mapa_linea(lugar, objetos: dict, estado: int, personajes):
+def mapa_linea(lugar, objetos, estado: int, personajes):
     ubicacion = lugar["ubicacion"]
     adyacentes = lugar["adyacentes"]
     descripcion = lugar["descripcion"]

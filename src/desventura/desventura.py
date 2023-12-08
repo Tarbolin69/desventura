@@ -1,6 +1,8 @@
 import csv
+import ast
 import time
 import os
+import textwrap
 
 
 def menu_principal():
@@ -23,7 +25,7 @@ def menu_principal():
             continuar_partida()
         elif eleccion == "3":
             creditos()
-        elif eleccion == "4":
+        elif eleccion == "0":
             print("¡Hasta pronto!")
             break
         else:
@@ -51,10 +53,11 @@ def creditos():
 
 
 def print_lento(texto):
+    print()
     for letra in texto:
         print(letra, end="")
-        # sys.stdout.write(letra)
-        time.sleep(0.0001)
+        # time.sleep(0.0001)
+    print()
 
 
 def archivo_a_dict(camino):
@@ -78,10 +81,49 @@ def archivo_a_txt(camino):
         return archivo_leido
 
 
+def mirar(objetivo: str):
+    print(f"Miras {objetivo}")
+
+
+def agarrar(objetivo: str):
+    print(f"Agarras {objetivo}")
+
+
+def usar(objetivo: str):
+    print(f"Usas {objetivo}")
+
+
+def ir(objetivo: str):
+    print(f"Vas a {objetivo}")
+
+
+def acciones(accion, mapa, inventario, objetos):
+    if not accion:
+        print()
+        print("Ingrese una opcion valida")
+        return
+    print()
+    objetivo = accion.strip().lower().split()[-1]
+    accion = accion.strip().lower().split()[0]
+    match accion:
+        case "mirar":
+            mirar(objetivo)
+        case "agarrar":
+            agarrar(objetivo)
+        case "usar":
+            usar(objetivo)
+        case "ir":
+            ir(objetivo)
+        case _:
+            print("Esa no es una opcion valida")
+
+
 def juego(mapa, objetos):
     inventario = []
     while True:
-        pass
+        describir_locacion(mapa)
+        accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
+        acciones(accion, mapa, inventario, objetos)
 
 
 def tutorial():
@@ -98,7 +140,20 @@ def tutorial():
 def inicializar_partida_locacion():
     pass
 
-def describir_locacion(mapa)
+
+def describir_locacion(mapa):
+    print()
+    for locacion in mapa:
+        if locacion["estado"] == "1":
+            print(textwrap.fill(locacion["texto"], 80))
+    print()
+    print("Las habitaciones adyacentes son:")
+    for locacion in mapa:
+        if locacion["estado"] == "1":
+            for adyacente in ast.literal_eval(locacion["adyacentes"]):
+                print(f"- {adyacente}")
+    print()
+
 
 def limpiar_pantalla():
     os.system("cls" if os.name == "nt" else "clear")
@@ -108,8 +163,28 @@ def cambiar_ubicacion():
     pass
 
 
-def hablar_con_personaje():
-    pass
+def hablar_con_personaje(camino):
+    ruta = os.path.join(camino, "personajes", "agujero.csv")
+    with open(ruta, "rt", encoding="utf-8-sig") as renglones:
+        dialogos = [x.rstrip().split(";") for x in renglones]
+        print(dialogos[1][2])
+        time.sleep(1)
+        print(dialogos[1][3])
+        cant = [str(x + 1) for x, _ in enumerate(dialogos[2:])]
+        print(cant)
+        while True:
+            for x, y in enumerate(dialogos[2:-1]):
+                print(x + 1, "-", y[2])
+            print(len(cant), "- Irte")
+            opcion = input("Q: ")
+            if opcion == cant[-1]:
+                break
+            elif opcion in cant:
+                print(dialogos[int(opcion) + 1][3])
+        print(dialogos[int(opcion) + 1][2])
+        time.sleep(1)
+        print(dialogos[int(opcion) + 1][3])
+    return
 
 
 def iniciar_nueva_partida():
