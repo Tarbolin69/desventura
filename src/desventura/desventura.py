@@ -146,12 +146,11 @@ def describir_locacion(mapa):
     for locacion in mapa:
         if locacion["estado"] == "1":
             print(textwrap.fill(locacion["texto"], 80))
-    print()
-    print("Las habitaciones adyacentes son:")
-    for locacion in mapa:
-        if locacion["estado"] == "1":
+            print()
             for adyacente in ast.literal_eval(locacion["adyacentes"]):
                 print(f"- {adyacente}")
+    print("Las habitaciones adyacentes son:")
+
     print()
 
 
