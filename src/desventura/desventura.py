@@ -88,15 +88,20 @@ def mirar(objetivo: str):
 
 
 def agarrar(objetivo: str, mapa: list, objetos: list[dict]):
+    objetivo = objetivo.title()
     for locacion in mapa:
-        if locacion["estado"] == "1" and objetivo in locacion["items"]:
+        items_posibles = ast.literal_eval(locacion["items"])
+        if (
+            locacion["estado"] == "1"
+            and items_posibles != ""
+            and objetivo in items_posibles[0]
+        ):
             for i, objeto in enumerate(objetos):
-                if objeto["nombre"].lower() == objetivo:
+                if objeto["nombre"] == objetivo:
                     item = objetos.pop(i)
-                    locacion["items"].remove(objetivo)
+                    ast.literal_eval(locacion["items"]).remove(objetivo)
+                    print("PIOLA")
                     return item
-        break
-    print(f"No puedes agarrar {objetivo}")
 
 
 def usar(objetivo: str, mapa):
@@ -151,8 +156,9 @@ def acciones(accion, mapa, objetos, camino):
         print("Ingrese una opcion valida")
         return
     print()
-    objetivo = accion.strip().lower().split()[-1]
-    accion = accion.strip().lower().split()[0]
+    accion_input = accion.split()
+    accion = accion_input[0]
+    objetivo = " ".join(accion_input[1:])
     match accion:
         case "mirar":
             mirar(objetivo)
