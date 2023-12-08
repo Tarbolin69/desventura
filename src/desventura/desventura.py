@@ -95,45 +95,47 @@ def usar(objetivo: str):
     print(f"Usas {objetivo}")
 
 
-def hablar(objetivo: str, mapa):
+def hablar(objetivo: str, mapa, camino):
     personaje = objetivo.strip().lower() + ".csv"
     for locacion in mapa:
-        if locacion["estado"] == "1":
-            if objetivo.strip().lower() + ".csv" == locacion["personajes"]:
-                print(f"Hola, agujero!")
-            else:
-                print("No hay nadie aca")
-    print(f"Hablas con {objetivo}")
+        if locacion["estado"] == "1" and locacion["personajes"] == personaje:
+            hablar_con_personaje(camino, personaje)
+            return
+    print(f"No puedes hablar con {objetivo}")
 
 
-def hablar_con_personaje(camino):
-    ruta = os.path.join(camino, "personajes", "agujero.csv")
+def hablar_con_personaje(camino, personaje):
+    ruta = os.path.join(camino, "personajes", personaje)
     with open(ruta, "rt", encoding="utf-8-sig") as renglones:
         dialogos = [x.rstrip().split(";") for x in renglones]
-        print(dialogos[1][2])
+        print_acomodado(dialogos[1][2])
         time.sleep(1)
-        print(dialogos[1][3])
+        print_acomodado(dialogos[1][3])
+        print()
         cant = [str(x + 1) for x, _ in enumerate(dialogos[2:])]
-        print(cant)
         while True:
             for x, y in enumerate(dialogos[2:-1]):
                 print(x + 1, "-", y[2])
             print(len(cant), "- Irte")
-            opcion = input("Q: ")
+            opcion = input("\nElige que preguntar: ").strip().lower()
             if opcion == cant[-1]:
                 break
             elif opcion in cant:
-                print(dialogos[int(opcion) + 1][3])
-        print(dialogos[int(opcion) + 1][2])
+                print()
+                print_acomodado(dialogos[int(opcion) + 1][3])
+                print()
+        print()
+        print_acomodado(dialogos[int(opcion) + 1][2])
         time.sleep(1)
-        print(dialogos[int(opcion) + 1][3])
+        print_acomodado(dialogos[int(opcion) + 1][3])
 
 
 def ir(objetivo: str, mapa):
+    describir_locacion(mapa)
     print(f"Vas a {objetivo}")
 
 
-def acciones(accion, mapa, inventario, objetos):
+def acciones(accion, mapa, inventario, objetos, camino):
     if not accion:
         print()
         print("Ingrese una opcion valida")
@@ -149,7 +151,7 @@ def acciones(accion, mapa, inventario, objetos):
         case "usar":
             usar(objetivo)
         case "hablar":
-            hablar(objetivo, mapa)
+            hablar(objetivo, mapa, camino)
         case "ir":
             ir(objetivo, mapa)
         case "salir":
@@ -158,13 +160,17 @@ def acciones(accion, mapa, inventario, objetos):
             print("Esa no es una opcion valida")
 
 
+def print_acomodado(texto):
+    print(textwrap.fill(texto, 80))
+
+
 def describir_locacion(mapa):
     print()
     for locacion in mapa:
         if locacion["estado"] == "1":
             adyacentes = ast.literal_eval(locacion["adyacentes"])
             items = ast.literal_eval(locacion["items"])
-            print(textwrap.fill(locacion["texto"], 80))
+            print_acomodado(locacion["texto"])
             print()
             print("Las habitaciones adyacentes son:")
             for adyacente in adyacentes:
@@ -178,12 +184,12 @@ def describir_locacion(mapa):
             print("No ves nada de uso en este lugar")
 
 
-def juego(mapa, objetos):
+def juego(mapa, objetos, camino):
     inventario = []
+    describir_locacion(mapa)
     while True:
-        describir_locacion(mapa)
         accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        acciones(accion, mapa, inventario, objetos)
+        acciones(accion, mapa, inventario, objetos, camino)
 
 
 def limpiar_pantalla():
@@ -198,7 +204,7 @@ def iniciar_nueva_partida(campaña):
     dict_objetos = archivo_a_dict(intro_objetos)
     dict_mapa = archivo_a_dict(intro_mapa)
     print_lento(archivo_a_txt(intro_archivo))
-    juego(dict_mapa, dict_objetos)
+    juego(dict_mapa, dict_objetos, camino)
 
 
 def elegir_campaña():
