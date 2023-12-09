@@ -36,7 +36,7 @@ def texto_inicio(campaña):
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as introduccion:
             introduccion.write(inicio)
     except Exception as err:
-        print("Hubo un error al crear el archivo:" + err)
+        print("Hubo un error al crear el archivo:" + repr(err))
 
 
 def texto_final(campaña):
@@ -51,7 +51,7 @@ def texto_final(campaña):
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as despedida:
             despedida.write(final)
     except Exception as err:
-        print("Hubo un error al crear el archivo:" + err)
+        print("Hubo un error al crear el archivo:" + repr(err))
 
 
 def nombrar_ubicaciones():
