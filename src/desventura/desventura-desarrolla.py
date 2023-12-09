@@ -24,10 +24,15 @@ def crear_campaña():
         return campaña_carpeta
 
 
+def texto_inicio():
+    pass
+
+
+def texto_final():
+    pass
+
+
 def nombrar_ubicaciones():
-    # Habria que designar una ubicacion con estado "2" que sea el final
-    # Tal vez requiera que uses un item (uno de los secretos)
-    # Y habria que pedir al final de crear_mapa() un texto que aparezca cuando ganas
     ubicaciones = []
     print_centro('--- Ingrese al nombrar una ubicacion "ADIOS" para salir ---')
     print_centro("--- La primera ubicacion es el principio de la campaña  ---")

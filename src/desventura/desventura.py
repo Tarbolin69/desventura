@@ -126,13 +126,19 @@ def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
     print(f"No puedes agarrar {objetivo}")
 
 
-def usar(objetivo: str, inventario, mapa: list[dict]):
+def usar(objetivo: str, inventario: list[dict], mapa: list[dict]):
     item_titulo = objetivo.title()
+    usable = False
     for item in inventario:
-        print(item)
-    for locacion in mapa:
-        if locacion["ubicacion"] == "2" and item_titulo[0] == "*":
-            print("ganaste")
+        if item["nombre"] == item_titulo or item["nombre"] == "*" + item_titulo:
+            usable = True
+            break
+    if usable:
+        for locacion in mapa:
+            if locacion["estado"] == "3" and item_titulo[0] == "*":
+                print("ganaste")
+                break
+    print("No tienes ese item en tu inventario")
 
 
 def hablar(objetivo: str, mapa, camino):
@@ -173,9 +179,9 @@ def hablar_con_personaje(camino: str, personaje: str):
 
 def ir(objetivo: str, mapa: list[dict]):
     objetivo_locacion = objetivo.title()
-    inicio = dict
+    inicio = dict()
     for locacion in mapa:
-        if locacion["estado"] == "1":
+        if locacion["estado"] in ["1", "3"]:
             inicio = locacion
             break
     if locacion["ubicacion"] == objetivo_locacion:
@@ -183,12 +189,27 @@ def ir(objetivo: str, mapa: list[dict]):
         return
     for locacion in mapa:
         if locacion["ubicacion"] == objetivo_locacion:
-            inicio["estado"] = "0"
-            locacion["estado"] = "1"
-            print(f"Has ido a {objetivo_locacion}")
-            print()
-            describir_locacion(mapa)
-            return
+            if inicio["estado"] == "3":
+                inicio["estado"] = "2"
+                locacion["estado"] = "1"
+                print(f"Has ido a {objetivo_locacion}")
+                print()
+                describir_locacion(mapa)
+                return
+            elif inicio["estado"] == "1" and locacion["estado"] == "0":
+                inicio["estado"] = "0"
+                locacion["estado"] = "1"
+                print(f"Has ido a {objetivo_locacion}")
+                print()
+                describir_locacion(mapa)
+                return
+            elif inicio["estado"] == "1" and locacion["estado"] == "2":
+                inicio["estado"] = "0"
+                locacion["estado"] = "3"
+                print(f"Has ido a {objetivo_locacion}")
+                print()
+                describir_locacion(mapa)
+                return
     print(f"No puedes ir a {objetivo_locacion}")
 
 
@@ -227,7 +248,7 @@ def print_acomodado(texto):
 
 def describir_locacion(mapa):
     for locacion in mapa:
-        if locacion["estado"] == "1":
+        if locacion["estado"] in ["1", "3"]:
             adyacentes = ast.literal_eval(locacion["adyacentes"])
             items = ast.literal_eval(locacion["items"])
             print_acomodado(locacion["texto"])
