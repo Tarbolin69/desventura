@@ -63,6 +63,9 @@ def nombrar_ubicaciones():
     print_centro(
         "=== La ultima ubicacion que escribas sera donde se gane el juego (usando un objeto) ==="
     )
+    print_centro(
+        "=== ¡Recuerda mencionar si hay algun personaje aqui en la descripción! ==="
+    )
     while True:
         ubicacion = input("Nombra la ubicacion: ").strip().title()
         if ubicacion.lower() == "adios":
@@ -99,7 +102,6 @@ def nombrar_ubicaciones():
 
 def crear_personaje(camino):
     multiples = False
-    lista_de_archivos = []
     while True:
         while True:
             if multiples:
@@ -154,8 +156,6 @@ def crear_personaje(camino):
             print("Ha occurrido un problema en el sistema operativo")
         else:
             print(f"¡{nombre_acomodado} fue creado correctamente!")
-        # poner un for que te pregunte en que ubicacion se encuentra cada personaje
-        # mas o menos lo mismo que en los objetos
 
 
 def crear_objetos(campaña, ubicaciones):
