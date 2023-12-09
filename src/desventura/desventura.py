@@ -158,7 +158,6 @@ def hablar(objetivo: str, mapa, camino):
 
 
 def hablar_con_personaje(camino: str, personaje: str):
-    personaje_nombre = personaje[:-4].title()
     ruta = os.path.join(camino, "personajes", personaje)
     with open(ruta, "rt", encoding="utf-8-sig") as renglones:
         dialogos = [x.rstrip().split(";") for x in renglones]
