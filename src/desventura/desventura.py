@@ -75,7 +75,7 @@ def archivo_a_dict(camino):
 def archivo_a_txt(camino):
     try:
         with open(camino, "rt", encoding="utf-8-sig") as archivo:
-            archivo_leido = archivo.read()
+            archivo_leido = archivo.read().split("\n")
     except Exception:
         print("El archivo no pudo ser leido")
         return
@@ -83,19 +83,50 @@ def archivo_a_txt(camino):
         return archivo_leido
 
 
-def mirar(objetivo: str, mapa, objetos):
-    objetivo_titulo = objetivo.title()
+# def mirar(objetivo: str, mapa, objetos):
+#    objetivo_titulo = objetivo.title()
+#    for locacion in mapa:
+#        if (
+#            locacion["estado"] == "1"
+#            and objetivo_titulo in locacion["items"]
+#            and len(objetivo_titulo)
+#        ):
+#            for items in objetos:
+#                if objetivo_titulo == items["nombre"]:
+#                    print_acomodado(items["descripción"])
+#                    return
+#    print(f"No puedes mirar {objetivo}")
+
+
+def mirar(objetivo: str, mapa, objetos, inventario):
+    objetivo = objetivo.title()
+    if objetivo == "Inventario":
+        if inventario:
+            print("Tu inventario contiene:")
+            for item in inventario:
+                print(f"- {item['nombre']}")
+            return
+        else:
+            print("Tu inventario esta vacio")
+            return
     for locacion in mapa:
         if (
-            locacion["estado"] == "1"
-            and objetivo_titulo in locacion["items"]
-            and len(objetivo_titulo)
+            locacion["estado"] in ["1", "3"]
+            and objetivo in locacion["items"]
+            and len(objetivo)
         ):
             for items in objetos:
-                if objetivo_titulo == items["nombre"]:
-                    print_acomodado(items["descripción"])
+                if objetivo == items["nombre"]:
+                    print(f"{objetivo}: {items['descripción']}")
                     return
-    print(f"No puedes mirar {objetivo}")
+        if objetivo == locacion["ubicacion"] and locacion["estado"] in ["1", "3"]:
+            describir_locacion(mapa)
+            return
+    for item in inventario:
+        if objetivo == item["nombre"]:
+            print(f"{objetivo}: {item['descripción']}")
+            return
+    print(f"El {objetivo} no se encuentra")
 
 
 def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
@@ -104,23 +135,21 @@ def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
     for locacion in mapa:
         items_posibles = ast.literal_eval(locacion["items"])
         if (
-            locacion["estado"] == "1"
+            locacion["estado"] in ["1", "3"]
             and items_posibles != ""
-            and (
-                objetivo in items_posibles[0] or objetivo_especial in items_posibles[0]
-            )
+            and (objetivo in items_posibles or objetivo_especial in items_posibles)
         ):
             for i, objeto in enumerate(objetos):
-                if objeto["nombre"] == objetivo_especial:
+                if objeto["nombre"] == objetivo:
+                    item = objetos.pop(i)
+                    locacion["items"] = locacion["items"].replace(objetivo, " ")
+                    print(f"Obtuviste {objetivo}")
+                    return item
+                elif objeto["nombre"] == objetivo_especial:
                     item = objetos.pop(i)
                     locacion["items"] = locacion["items"].replace(
                         objetivo_especial, " "
                     )
-                    print(f"Obtuviste {objetivo}")
-                    return item
-                if objeto["nombre"] == objetivo:
-                    item = objetos.pop(i)
-                    locacion["items"] = locacion["items"].replace(objetivo, " ")
                     print(f"Obtuviste {objetivo}")
                     return item
     print(f"No puedes agarrar {objetivo}")
@@ -134,10 +163,15 @@ def usar(objetivo: str, inventario: list[dict], mapa: list[dict]):
             usable = True
             break
     if usable:
+        usable = False
         for locacion in mapa:
             if locacion["estado"] == "3" and item_titulo[0] == "*":
+                usable = True
                 print("ganaste")
                 break
+        if not usable:
+            print("No puedes usar este item aqui")
+            return
     print("No tienes ese item en tu inventario")
 
 
@@ -219,13 +253,12 @@ def acciones(accion, mapa, objetos, camino, inventario):
         print("Ingrese una opcion valida")
         return
     print()
-    accion_input = accion.split()
+    accion_input = accion.strip().split()
     accion = accion_input[0]
     objetivo = " ".join(accion_input[1:])
     match accion:
         case "mirar":
-            # mirar(objetivo)
-            mirar(objetivo, mapa, objetos)
+            mirar(objetivo, mapa, objetos, inventario)
         case "agarrar":
             agarrado = agarrar(objetivo, mapa, objetos)
             if agarrado:
@@ -290,12 +323,16 @@ def limpiar_pantalla():
 def iniciar_nueva_partida(campaña):
     camino = os.path.join("historias", campaña)
     intro_archivo = os.path.join(camino, "INICIO.txt")
+    fin_archivo = os.path.join(camino, "FINAL.txt")
     intro_mapa = os.path.join(camino, "mapa.csv")
     intro_objetos = os.path.join(camino, "objetos.csv")
     dict_objetos = archivo_a_dict(intro_objetos)
     dict_mapa = archivo_a_dict(intro_mapa)
     limpiar_pantalla()
-    print_lento(archivo_a_txt(intro_archivo))
+    inicio_texto = archivo_a_txt(intro_archivo)
+    fin_texto = archivo_a_txt(fin_archivo)
+    for linea in inicio_texto:
+        print_acomodado(linea)
     juego(dict_mapa, dict_objetos, camino)
 
 
