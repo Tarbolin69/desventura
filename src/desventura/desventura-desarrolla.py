@@ -25,7 +25,7 @@ def crear_campaña():
 
 
 def texto_inicio():
-    pass
+    print_centro("=== Este ")
 
 
 def texto_final():
@@ -248,6 +248,7 @@ def main():
     campaña = crear_campaña()
     if not campaña:
         return
+    inicio = texto_inicio()
     ubicaciones = nombrar_ubicaciones()
     crear_personaje(campaña)
     crear_objetos(campaña, ubicaciones)

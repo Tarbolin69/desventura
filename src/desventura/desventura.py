@@ -1,4 +1,5 @@
 import csv
+import shutil
 import ast
 import time
 import os
@@ -54,14 +55,6 @@ def creditos():
         print("ERROR: " + repr(err))
 
 
-def print_lento(texto):
-    print()
-    for letra in texto:
-        print(letra, end="")
-        # time.sleep(0.0001)
-    print()
-
-
 def archivo_a_dict(camino):
     try:
         with open(camino, "rt", encoding="utf-8-sig") as archivo:
@@ -81,21 +74,6 @@ def archivo_a_txt(camino):
         return
     else:
         return archivo_leido
-
-
-# def mirar(objetivo: str, mapa, objetos):
-#    objetivo_titulo = objetivo.title()
-#    for locacion in mapa:
-#        if (
-#            locacion["estado"] == "1"
-#            and objetivo_titulo in locacion["items"]
-#            and len(objetivo_titulo)
-#        ):
-#            for items in objetos:
-#                if objetivo_titulo == items["nombre"]:
-#                    print_acomodado(items["descripción"])
-#                    return
-#    print(f"No puedes mirar {objetivo}")
 
 
 def mirar(objetivo: str, mapa, objetos, inventario):
@@ -155,23 +133,18 @@ def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
     print(f"No puedes agarrar {objetivo}")
 
 
-def usar(objetivo: str, inventario: list[dict], mapa: list[dict]):
-    item_titulo = objetivo.title()
-    usable = False
+def usar(objetivo: str, inventario: list[dict], mapa: list[dict], texto_final):
+    item_titulo = "*" + objetivo.title()
+    final = False
     for item in inventario:
-        if item["nombre"] == item_titulo or item["nombre"] == "*" + item_titulo:
-            usable = True
+        if item["nombre"] == item_titulo:
+            final = True
             break
-    if usable:
-        usable = False
+    if final:
         for locacion in mapa:
-            if locacion["estado"] == "3" and item_titulo[0] == "*":
-                usable = True
-                print("ganaste")
-                break
-        if not usable:
-            print("No puedes usar este item aqui")
-            return
+            if locacion["estado"] == "3":
+                victoria(texto_final)
+        print("No puedes usar este item aqui")
     print("No tienes ese item en tu inventario")
 
 
@@ -247,7 +220,7 @@ def ir(objetivo: str, mapa: list[dict]):
     print(f"No puedes ir a {objetivo_locacion}")
 
 
-def acciones(accion, mapa, objetos, camino, inventario):
+def acciones(accion, mapa, objetos, camino, inventario, texto_final):
     if not accion:
         print()
         print("Ingrese una opcion valida")
@@ -264,7 +237,7 @@ def acciones(accion, mapa, objetos, camino, inventario):
             if agarrado:
                 inventario.append(agarrado)
         case "usar":
-            usar(objetivo, inventario, mapa)
+            usar(objetivo, inventario, mapa, texto_final)
         case "hablar":
             hablar(objetivo, mapa, camino)
         case "ir":
@@ -308,12 +281,15 @@ def describir_locacion(mapa):
     print("No ves nada de uso en este lugar")
 
 
-def juego(mapa, objetos, camino):
+def juego(mapa, objetos, camino, texto_final, inventario):
     describir_locacion(mapa)
-    inventario = []
     while True:
         accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        acciones(accion, mapa, objetos, camino, inventario)
+        acciones(accion, mapa, objetos, camino, inventario, texto_final)
+
+
+def print_centro(texto: str):
+    print(texto.center(shutil.get_terminal_size().columns))
 
 
 def limpiar_pantalla():
@@ -321,6 +297,7 @@ def limpiar_pantalla():
 
 
 def iniciar_nueva_partida(campaña):
+    inventario = []
     camino = os.path.join("historias", campaña)
     intro_archivo = os.path.join(camino, "INICIO.txt")
     fin_archivo = os.path.join(camino, "FINAL.txt")
@@ -333,7 +310,7 @@ def iniciar_nueva_partida(campaña):
     fin_texto = archivo_a_txt(fin_archivo)
     for linea in inicio_texto:
         print_acomodado(linea)
-    juego(dict_mapa, dict_objetos, camino)
+    juego(dict_mapa, dict_objetos, camino, fin_texto, inventario)
 
 
 def continuar_partida():
@@ -357,6 +334,14 @@ def elegir_campaña(carpeta):
 
 
 def guardar_partida():
+    quit()
+
+
+def victoria(texto_final):
+    limpiar_pantalla()
+    for linea in texto_final:
+        print_acomodado(linea)
+    print_centro("===== HAS GANADO =====")
     quit()
 
 
