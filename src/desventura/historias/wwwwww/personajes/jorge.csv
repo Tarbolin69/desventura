@@ -1,0 +1,4 @@
+﻿nombre;opcion;pregunta;respuesta
+Jorge;0;<le pegas a jorge para que se levante>;"Ya estoy levantado... calmante"
+Jorge;1;Jorge, ¿sabes donde hay un martillo?;"Si, anda escondido detras de la heladera en el living"
+Jorge;2;<Lo dejas a Jorge que sigua durmiendo>;<Jorge ya esta roncando denuevo>

@@ -24,18 +24,45 @@ def crear_campaña():
         return campaña_carpeta
 
 
-def texto_inicio():
-    print_centro("=== Este ")
+def texto_inicio(campaña):
+    print_centro("=== Esta es la introducción de tu campaña ===")
+    while True:
+        inicio = input("> ").strip()
+        if inicio:
+            break
+        print("Porfavor, ingrese algun texto")
+    try:
+        archivo_nombre = os.path.join(campaña, "INICIO.txt")
+        with open(archivo_nombre, "wt", encoding="utf-8-sig") as introduccion:
+            introduccion.write(inicio)
+    except Exception as err:
+        print("Hubo un error al crear el archivo:" + err)
 
 
-def texto_final():
-    pass
+def texto_final(campaña):
+    print_centro("=== Este es el texto final de tu campaña ===")
+    while True:
+        final = input("> ").strip()
+        if final:
+            break
+        print("Porfavor, ingrese algun texto")
+    try:
+        archivo_nombre = os.path.join(campaña, "FINAL.txt")
+        with open(archivo_nombre, "wt", encoding="utf-8-sig") as despedida:
+            despedida.write(final)
+    except Exception as err:
+        print("Hubo un error al crear el archivo:" + err)
 
 
 def nombrar_ubicaciones():
     ubicaciones = []
-    print_centro('--- Ingrese al nombrar una ubicacion "ADIOS" para salir ---')
-    print_centro("--- La primera ubicacion es el principio de la campaña  ---")
+    print_centro(
+        '=== Ingrese al nombrar una ubicacion "ADIOS" para terminar de escribir ==='
+    )
+    print_centro("=== La primera ubicacion es el principio de la campaña  ===")
+    print_centro(
+        "=== La ultima ubicacion que escribas sera donde se gane el juego (usando un objeto) ==="
+    )
     while True:
         ubicacion = input("Nombra la ubicacion: ").strip().title()
         if ubicacion.lower() == "adios":
@@ -48,7 +75,7 @@ def nombrar_ubicaciones():
         lugar = {"ubicacion": ubicacion, "descripcion": descripcion, "adyacentes": []}
         ubicaciones.append(lugar)
     print_centro(
-        "--- Es recomendable que toda ubicacion tenga al menos 1 adyacencia ---"
+        "=== Es recomendable que toda ubicacion tenga al menos 1 adyacencia ==="
     )
     for lugar in ubicaciones:
         print(f"Ubicación actual: {lugar['ubicacion']}")
@@ -92,7 +119,6 @@ def crear_personaje(camino):
         os.mkdir(camino_archivo)
         archivo_nombre = os.path.join(camino_archivo, f"{nombre_archivo}.csv")
         linea = 1
-        print(archivo_nombre)
         try:
             with open(archivo_nombre, "wt", encoding="utf-8-sig") as personaje:
                 personaje.write("nombre;opcion;pregunta;respuesta\n")
@@ -133,16 +159,16 @@ def crear_personaje(camino):
 
 
 def crear_objetos(campaña, ubicaciones):
-    # Objetos secretos que empiezas con .
-    # O que tengan dos nombres separados por .
-    # Pared.Armadura
-    # Y no son listados como los otros
-    # Y tenes que hacer algo como "agarrar PARED" para obtener el item Armadura
-    # Usados para ganar el juego?
     archivo_nombre = os.path.join(campaña, "objetos.csv")
     try:
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as objetos:
             objetos.write("nombre;locacion;descripción\n")
+            print_centro("== DEBE DE HABER 1 ITEM QUE EMPIEZE CON * ==")
+            print_centro("== ESTE ITEM SERA REQUERIDO PARA GANAR EL JUEGO ==")
+            print("| Este item estara oculto, y el jugador no sabra donde se encuentra")
+            print(
+                "| Asi que algo, o alguien, tendra que decierle donde puede AGARRAR dicho item"
+            )
             while True:
                 print('Para cancelar la carga ingrese "ADIOS".')
                 nombre = input("Ingrese el nombre del objeto: ").strip().title()
@@ -170,6 +196,8 @@ def crear_objetos(campaña, ubicaciones):
         print("ERROR: <objetos.csv> ya existe")
     except OSError:
         print("ERROR: Ha occurrido un problema en el sistema operativo")
+    except Exception:
+        print("Ha ocurrido un error al intentar escribir el archivo")
     else:
         print("Los objetos fueron creados correctamente!")
 
@@ -200,24 +228,22 @@ def leer_objetos(archivo):
 
 
 def crear_mapa(camino, lugares):
-    # Quiza pedir otra seccion con texto si se usa un item en ese lugar
-    # tipo "item-uso;item-texto"
-    # los que no tengan nada solo tienen "NADA" en las dos secciones
     archivo_nombre = os.path.join(camino, "mapa.csv")
-    camino_archivo = os.path.join(camino, "personajes")  # No se si esta bien asi xd
-    archivo_objetos = os.path.join(camino, "objetos.csv")  # No se si esta bien asi xd
+    camino_archivo = os.path.join(camino, "personajes")
+    archivo_objetos = os.path.join(camino, "objetos.csv")
     objetos = leer_objetos(archivo_objetos)
     lista_personajes = os.listdir(camino_archivo)
     try:
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as mapa:
             mapa.write("ubicacion;estado;adyacentes;texto;items;personajes\n")
             estado = 1
-            for lugar in lugares:
-                # falta obtener todos los argumentos requeridos
-                # 2 hay que obtenerlos leyendo archivos
+            for i, lugar in enumerate(lugares):
                 personajes = []
-                print_centro("--- Personajes disponibles ---")
-                print_centro('--- Ingrese "ADIOS" para salir ---')
+                print_centro("=== Personajes disponibles ===")
+                print_centro('=== Ingrese "ADIOS" para salir ===')
+                print_centro(
+                    "=== O si es que no hay mas personajes en esa ubicacion ==="
+                )
                 for personaje in lista_personajes:
                     personaje_arreglado = personaje[:-4].replace("_", " ").title()
                     print(f"\t- {personaje_arreglado}")
@@ -236,6 +262,8 @@ def crear_mapa(camino, lugares):
                         print("Personaje añadido!")
                     else:
                         print("Ese personaje no existe o esta repetido")
+                if i == len(lugares) - 1:
+                    estado = 2
                 mapa.write(mapa_linea(lugar, objetos, estado, ",".join(personajes)))
                 estado = 0
     except FileExistsError:
@@ -248,11 +276,12 @@ def main():
     campaña = crear_campaña()
     if not campaña:
         return
-    inicio = texto_inicio()
+    texto_inicio(campaña)
     ubicaciones = nombrar_ubicaciones()
-    crear_personaje(campaña)
     crear_objetos(campaña, ubicaciones)
+    crear_personaje(campaña)
     crear_mapa(campaña, ubicaciones)
+    texto_final(campaña)
 
 
 main()

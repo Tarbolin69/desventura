@@ -1,0 +1,3 @@
+﻿ubicacion;estado;adyacentes;texto;items;personajes
+Living;1;['Baño'];un living;['*Martillo'];jorge.csv
+Baño;2;['Living'];baño con una pared debil;[];NADIE
