@@ -29,6 +29,7 @@ def menu_principal():
                 creditos()
             case "0":
                 print("¡Hasta pronto!")
+                break
             case _:
                 print("Opcion invalida")
 
@@ -45,6 +46,7 @@ def nuevo_juego():
             break
         else:
             print("Opcion invalida")
+            print()
 
 
 def creditos():
@@ -219,7 +221,7 @@ def ir(objetivo: str, mapa: list[dict]):
     print(f"No puedes ir a {objetivo_locacion}")
 
 
-def acciones(accion, mapa, objetos, camino, inventario, texto_final):
+def acciones(accion, mapa, objetos, camino, inventario, texto_final, campaña):
     if not accion:
         print()
         print("Ingrese una opcion valida")
@@ -242,7 +244,7 @@ def acciones(accion, mapa, objetos, camino, inventario, texto_final):
         case "ir":
             ir(objetivo, mapa)
         case "salir":
-            guardar_partida()
+            guardar_partida(campaña, mapa, objetos, inventario)
         case _:
             print("Esa no es una opcion valida")
 
@@ -280,11 +282,11 @@ def describir_locacion(mapa):
     print("No ves nada de uso en este lugar")
 
 
-def juego(mapa, objetos, camino, texto_final, inventario):
+def juego(mapa, objetos, camino, texto_final, inventario, campaña):
     describir_locacion(mapa)
     while True:
         accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        acciones(accion, mapa, objetos, camino, inventario, texto_final)
+        acciones(accion, mapa, objetos, camino, inventario, texto_final, campaña)
 
 
 def print_centro(texto: str):
@@ -307,15 +309,51 @@ def iniciar_nueva_partida(campaña):
     limpiar_pantalla()
     inicio_texto = archivo_a_txt(intro_archivo)
     fin_texto = archivo_a_txt(fin_archivo)
-    for linea in inicio_texto:
-        print_acomodado(linea)
-    juego(dict_mapa, dict_objetos, camino, fin_texto, inventario)
+    if inicio_texto:
+        for linea in inicio_texto:
+            print_acomodado(linea)
+    juego(dict_mapa, dict_objetos, camino, fin_texto, inventario, campaña)
 
 
-def continuar_partida():
-    # Elige una de las partidas en "partidas", remueva todas las "X" de los otros archivos, y la pasa a el archivo
-    # seleccionado, eligiendolo
-    pass
+def iniciar_partida(campaña):
+    camino = os.path.join("partidas", campaña)
+    intro_archivo = os.path.join(camino, "INICIO.txt")
+    fin_archivo = os.path.join(camino, "FINAL.txt")
+    intro_mapa = os.path.join(camino, "mapa.csv")
+    intro_objetos = os.path.join(camino, "objetos.csv")
+    invent = os.path.join(camino, "inventario.csv")
+    dict_objetos = archivo_a_dict(intro_objetos)
+    dict_mapa = archivo_a_dict(intro_mapa)
+    dict_inventario = archivo_a_dict(invent)
+    limpiar_pantalla()
+    print(dict_mapa)
+    inicio_texto = archivo_a_txt(intro_archivo)
+    fin_texto = archivo_a_txt(fin_archivo)
+    if inicio_texto:
+        for linea in inicio_texto:
+            print_acomodado(linea)
+    juego(dict_mapa, dict_objetos, camino, fin_texto, dict_inventario, campaña)
+
+
+def guardar_partida(camino, mapa, objetos, inventario):
+    while True:
+        eleccion = input("\n¿Te gustaria guardar (Si/No)?\n> ").strip().lower()
+        if eleccion == "no":
+            quit()
+        elif eleccion == "si":
+            camino_completo = os.path.join("historias", camino)
+            n_partida = "1"
+            partida = os.path.join("partidas", camino + "_" + n_partida)
+            while os.path.exists(partida):
+                n_partida += "0"
+                partida = os.path.join("partidas", camino + "_" + n_partida)
+            os.mkdir(partida)
+            crear_copia_aventura(camino_completo, partida)
+            crear_mapa_guardado(mapa, partida)
+            crear_objetos_guardado(objetos, partida)
+            crear_inventario_csv(inventario, partida)
+            quit()
+        print("Ingrese una opcion valida")
 
 
 def elegir_campaña(carpeta):
@@ -332,8 +370,80 @@ def elegir_campaña(carpeta):
     return os.path.join(nombre_directorio)
 
 
-def guardar_partida():
-    quit()
+def crear_copia_aventura(camino, partida):
+    inicio = os.path.join(camino, "INICIO.txt")
+    final = os.path.join(camino, "FINAL.txt")
+    personajes = os.path.join(camino, "personajes")
+    personajes_partida = os.path.join(partida, "personajes")
+    shutil.copy(inicio, partida)
+    shutil.copy(final, partida)
+    shutil.copytree(personajes, personajes_partida)
+
+
+def crear_mapa_guardado(mapa, partida):
+    mapa_locacion = os.path.join(partida, "mapa.csv")
+    header = ["ubicacion", "estado", "adyacentes", "texto", "items", "personajes"]
+    try:
+        with open(
+            mapa_locacion,
+            "wt",
+            encoding="utf-8-sig",
+            newline="",
+        ) as nuevo_mapa:
+            dict_a_csv = csv.DictWriter(nuevo_mapa, fieldnames=header, delimiter=";")
+            dict_a_csv.writeheader()
+            dict_a_csv.writerows(mapa)
+    except Exception:
+        print("No se pudo guardar el mapa")
+
+
+def crear_objetos_guardado(objetos, partida):
+    objetos_locacion = os.path.join(partida, "objetos.csv")
+    header = ["nombre", "locacion", "descripción"]
+    try:
+        with open(
+            objetos_locacion,
+            "wt",
+            encoding="utf-8-sig",
+            newline="",
+        ) as nuevo_objetos:
+            dict_a_csv = csv.DictWriter(nuevo_objetos, fieldnames=header, delimiter=";")
+            dict_a_csv.writeheader()
+            dict_a_csv.writerows(objetos)
+    except Exception:
+        print("No se pudo guardar los objetos")
+
+
+def crear_inventario_csv(inventario, partida):
+    inventario_locacion = os.path.join(partida, "inventario.csv")
+    header = ["nombre", "locacion", "descripción"]
+    try:
+        with open(
+            inventario_locacion,
+            "wt",
+            encoding="utf-8-sig",
+            newline="",
+        ) as nuevo_inventario:
+            dict_a_csv = csv.DictWriter(
+                nuevo_inventario, fieldnames=header, delimiter=";"
+            )
+            dict_a_csv.writeheader()
+            dict_a_csv.writerows(inventario)
+    except Exception:
+        print("No se pudo guardar los objetos")
+
+
+def continuar_partida():
+    while True:
+        aceptar = input("¿Desearia continuar una partida? (Si/No)\n> ").strip().lower()
+        if aceptar == "si":
+            campaña = elegir_campaña("partidas")
+            iniciar_partida(campaña)
+            break
+        elif aceptar == "no":
+            break
+        else:
+            print("Opcion invalida")
 
 
 def victoria(texto_final):
