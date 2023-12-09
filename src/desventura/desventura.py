@@ -100,25 +100,39 @@ def mirar(objetivo: str, mapa, objetos):
 
 def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
     objetivo = objetivo.title()
+    objetivo_especial = "*" + objetivo.title()
     for locacion in mapa:
         items_posibles = ast.literal_eval(locacion["items"])
         if (
             locacion["estado"] == "1"
             and items_posibles != ""
-            and objetivo in items_posibles[0]
+            and (
+                objetivo in items_posibles[0] or objetivo_especial in items_posibles[0]
+            )
         ):
             for i, objeto in enumerate(objetos):
+                if objeto["nombre"] == objetivo_especial:
+                    item = objetos.pop(i)
+                    locacion["items"] = locacion["items"].replace(
+                        objetivo_especial, " "
+                    )
+                    print(f"Obtuviste {objetivo}")
+                    return item
                 if objeto["nombre"] == objetivo:
                     item = objetos.pop(i)
                     locacion["items"] = locacion["items"].replace(objetivo, " ")
                     print(f"Obtuviste {objetivo}")
                     return item
     print(f"No puedes agarrar {objetivo}")
-    print()
 
 
-def usar(objetivo: str, inventario, mapa):
-    pass
+def usar(objetivo: str, inventario, mapa: list[dict]):
+    item_titulo = objetivo.title()
+    for item in inventario:
+        print(item)
+    for locacion in mapa:
+        if locacion["ubicacion"] == "2" and item_titulo[0] == "*":
+            print("ganaste")
 
 
 def hablar(objetivo: str, mapa, camino):
@@ -178,8 +192,7 @@ def ir(objetivo: str, mapa: list[dict]):
     print(f"No puedes ir a {objetivo_locacion}")
 
 
-def acciones(accion, mapa, objetos, camino):
-    inventario = []
+def acciones(accion, mapa, objetos, camino, inventario):
     if not accion:
         print()
         print("Ingrese una opcion valida")
@@ -243,9 +256,10 @@ def describir_locacion(mapa):
 
 def juego(mapa, objetos, camino):
     describir_locacion(mapa)
+    inventario = []
     while True:
         accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
-        acciones(accion, mapa, objetos, camino)
+        acciones(accion, mapa, objetos, camino, inventario)
 
 
 def limpiar_pantalla():
