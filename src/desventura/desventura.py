@@ -83,8 +83,19 @@ def archivo_a_txt(camino):
         return archivo_leido
 
 
-def mirar(objetivo: str):
-    print(f"Miras {objetivo}")
+def mirar(objetivo: str, mapa, objetos):
+    objetivo_titulo = objetivo.title()
+    for locacion in mapa:
+        if (
+            locacion["estado"] == "1"
+            and objetivo_titulo in locacion["items"]
+            and len(objetivo_titulo)
+        ):
+            for items in objetos:
+                if objetivo_titulo == items["nombre"]:
+                    print_acomodado(items["descripción"])
+                    return
+    print(f"No puedes mirar {objetivo}")
 
 
 def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
@@ -179,7 +190,8 @@ def acciones(accion, mapa, objetos, camino):
     objetivo = " ".join(accion_input[1:])
     match accion:
         case "mirar":
-            mirar(objetivo)
+            # mirar(objetivo)
+            mirar(objetivo, mapa, objetos)
         case "agarrar":
             agarrado = agarrar(objetivo, mapa, objetos)
             if agarrado:
@@ -212,11 +224,21 @@ def describir_locacion(mapa):
                 print(f"- {adyacente}")
             print()
             if items and items[0] != " ":
-                print(f"En {locacion['ubicacion']} puedes ver:")
-                for item in items:
-                    print(f"- {item}")
-                break
-            print("No ves nada de uso en este lugar")
+                if len(items) > 1:
+                    print(f"En {locacion['ubicacion']} puedes ver:")
+                    for item in items:
+                        if item[0] != "*":
+                            print(f"- {item}")
+                    return
+                elif items[0][0] != "*":
+                    print(f"En {locacion['ubicacion']} puedes ver:")
+                    for item in items:
+                        if item[0] != "*":
+                            print(f"- {item}")
+                    return
+                else:
+                    break
+    print("No ves nada de uso en este lugar")
 
 
 def juego(mapa, objetos, camino):
