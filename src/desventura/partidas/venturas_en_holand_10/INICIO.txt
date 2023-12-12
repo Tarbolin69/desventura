@@ -1,0 +1,28 @@
+Este el tutorial oficial de Desventura. Aquí veras las bases sobre como avanzar en el juego y como usar las herramientas que tienes a tu disposición. Si has jugado juegos de texto en el pasado, entonces esto te resultara familiar.
+
+Imaginemos lo siguiente:
+
+         /`\            (        /`\
+  /`\   // \\           ))      // \\
+ // \\  // \\  /`\______||      // \\
+ // \\  // \\ // /       \  /`\ // \\
+ // \\  // \\ ///_________\// \\// \\
+ // \\  // \\ // |-[+]---| // \\// \\
+ // \\  // \\ // |-------| // \\// \\
+---'------'-----''-------'---'----'--
+~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~
+
+Te encuntras en una cabaña, en un gran y dense bosque de la elada tundra siberica. No recuerdas un tiempo en donde no hayas estado aqui. Aparte dela sala principal, tienes un Baño, un Sotano, y un Patio. Todos estan conectadosa esta sala principal. 
+
+No ves nada de uso en la sala principal.
+
+Las opciones a tu disposición en Desventura son las siguientes:
+    * Mirar <objeto>: Te da la descripción de un objeto o sobre donde estas
+    * Hablar <personaje>: Te permite hablar con un personaje
+    * Agarrar <objeto>: Te permite poner un objeto en tu inventario
+    * Ir <locacion>: Vas hacia una locacion adyacenta a donde estas
+    * Usar <objeto>: Usa uno de tus objetos
+
+Tambien puedes usar "SALIR" para guardar la partida y salir del programa.
+
+¡Intenta usar una de estas opciones y observa que ocurre!

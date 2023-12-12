@@ -67,15 +67,31 @@ def archivo_a_dict(camino):
         return
 
 
-def archivo_a_txt(camino):
+def archivo_a_txt(camino: str) -> list[str]:
     try:
         with open(camino, "rt", encoding="utf-8-sig") as archivo:
             archivo_leido = archivo.read().split("\n")
     except Exception:
         print("El archivo no pudo ser leido")
-        return
+        return [""]
     else:
         return archivo_leido
+
+
+def acciones_posibles():
+    """Imprime un listado de todas las acciones validas"""
+    acciones = {
+        "Mirar": "<objeto/lugar>",
+        "Hablar": "<personaje>",
+        "Agarrar": "<objeto>",
+        "Ir": "<locación",
+        "Usar": "<objeto>",
+        "Salir": "",
+    }
+    print()
+    print("ACCIONES POSIBLES:")
+    for accion, objetivo in acciones.items():
+        print(f"- {accion} {objetivo}")
 
 
 def mirar(objetivo: str, mapa, objetos, inventario):
@@ -247,6 +263,7 @@ def acciones(accion, mapa, objetos, camino, inventario, texto_final, campaña):
             guardar_partida(campaña, mapa, objetos, inventario)
         case _:
             print("Esa no es una opcion valida")
+            acciones_posibles()
 
 
 def print_acomodado(texto):
