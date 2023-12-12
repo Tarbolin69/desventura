@@ -238,7 +238,7 @@ def ir(objetivo: str, mapa: list[dict]):
         if locacion["estado"] in ["1", "3"]:
             inicio = locacion
             break
-    if locacion["ubicacion"] == objetivo_locacion:
+    if inicio["ubicacion"] == objetivo_locacion:
         print(f"Ya te encuentras en {objetivo_locacion}")
         return
     for locacion in mapa:
