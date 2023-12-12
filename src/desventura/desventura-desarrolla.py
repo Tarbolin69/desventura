@@ -4,10 +4,15 @@ import shutil
 
 
 def print_centro(texto: str):
+    """Imprime texto centrado en la terminal."""
     print(texto.center(shutil.get_terminal_size().columns))
 
 
 def crear_campaña():
+    """Crear nueva campaña
+
+    Pre: Pregunta al usuario por el nombre de la campaña.
+    Post: Intenta crear una carpeta dentro de la carpeta 'historias' con dicho nombre."""
     try:
         while True:
             campaña_titulo = input("Como se llamara tu campaña? ").strip()
@@ -19,18 +24,21 @@ def crear_campaña():
         os.makedirs(campaña_carpeta)
     except OSError:
         print("Ha ocurrido un error al crear la carpeta")
-        return
     else:
         return campaña_carpeta
 
 
-def texto_inicio(campaña):
+def texto_inicio(campaña: str):
+    """Crear introducción a la campaña
+
+    Pre: Pide al usuario que ingrese un texto introductorio a su campaña.
+    Post: Crea un archivo con dicho texto el la carpeta de la campaña."""
     print_centro("=== Esta es la introducción de tu campaña ===")
     while True:
         inicio = input("> ").strip()
         if inicio:
             break
-        print("Porfavor, ingrese algun texto")
+        print("Por favor, ingrese algún texto.")
     try:
         archivo_nombre = os.path.join(campaña, "INICIO.txt")
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as introduccion:
@@ -39,13 +47,17 @@ def texto_inicio(campaña):
         print("Hubo un error al crear el archivo:" + repr(err))
 
 
-def texto_final(campaña):
+def texto_final(campaña: str):
+    """Crear un texto de victoria para la campaña
+
+    Pre: Pide al usuario que ingrese un texto de victoria a su campaña.
+    Post: Crea un archivo con dicho texto el la carpeta de la campaña."""
     print_centro("=== Este es el texto final de tu campaña ===")
     while True:
         final = input("> ").strip()
         if final:
             break
-        print("Porfavor, ingrese algun texto")
+        print("Por favor, ingrese algún texto")
     try:
         archivo_nombre = os.path.join(campaña, "FINAL.txt")
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as despedida:
@@ -54,31 +66,36 @@ def texto_final(campaña):
         print("Hubo un error al crear el archivo:" + repr(err))
 
 
-def nombrar_ubicaciones():
+def nombrar_ubicaciones() -> list[dict]:
+    """Nombra ubicaciones de la campaña
+
+    Pre: Pide al usuario que ingrese el nombre, descripción y adyacencias de un ubicación en al mapa
+    hasta que ingrese 'ADIOS'.
+    Post: Devuelve las ubicaciones guardadas en una lista de diccionarios."""
     ubicaciones = []
     print_centro(
-        '=== Ingrese al nombrar una ubicacion "ADIOS" para terminar de escribir ==='
+        '=== Ingrese al nombrar una ubicación "ADIOS" para terminar de escribir ==='
     )
-    print_centro("=== La primera ubicacion es el principio de la campaña  ===")
+    print_centro("=== La primera ubicación es el principio de la campaña  ===")
     print_centro(
-        "=== La ultima ubicacion que escribas sera donde se gane el juego (usando un objeto) ==="
+        "=== La ultima ubicación que escribas sera donde se gane el juego (usando un objeto) ==="
     )
     print_centro(
-        "=== ¡Recuerda mencionar si hay algun personaje aqui en la descripción! ==="
+        "=== ¡Recuerda mencionar si hay algún personaje aquí en la descripción! ==="
     )
     while True:
-        ubicacion = input("Nombra la ubicacion: ").strip().title()
+        ubicacion = input("Nombra la ubicación: ").strip().title()
         if ubicacion.lower() == "adios":
             break
         while True:
-            descripcion = input("Dale una descripcion a la ubicacion: ").strip()
+            descripcion = input("Dale una descripción a la ubicación: ").strip()
             if descripcion:
                 break
-            print("Cada ubicacion necesita una descripcion")
+            print("Cada ubicación necesita una descripción")
         lugar = {"ubicacion": ubicacion, "descripcion": descripcion, "adyacentes": []}
         ubicaciones.append(lugar)
     print_centro(
-        "=== Es recomendable que toda ubicacion tenga al menos 1 adyacencia ==="
+        "=== Es recomendable que toda ubicación tenga al menos 1 adyacencia ==="
     )
     for lugar in ubicaciones:
         print(f"Ubicación actual: {lugar['ubicacion']}")
@@ -100,7 +117,12 @@ def nombrar_ubicaciones():
     return ubicaciones
 
 
-def crear_personaje(camino):
+def crear_personaje(camino: str):
+    """Crear personajes en la campaña
+
+    Pre: Pide al usuario que ingrese el nombre de su personaje, cuales son las preguntas que se le pueden hacer
+    a ese personaje, y sus respuestas.
+    Post: Guarda toda la información en un csv en la carpeta de 'personajes' dentro de la carpeta de la campaña."""
     multiples = False
     while True:
         while True:
@@ -112,7 +134,7 @@ def crear_personaje(camino):
                 return
             elif crear.lower() == "si":
                 break
-            print("Ingrese una opcion valida")
+            print("Ingrese una opción valida")
         multiples = True
         nombre = input("Cual es en nombre de tu personaje? ")
         nombre_acomodado = nombre.strip().title()
@@ -124,9 +146,9 @@ def crear_personaje(camino):
         try:
             with open(archivo_nombre, "wt", encoding="utf-8-sig") as personaje:
                 personaje.write("nombre;opcion;pregunta;respuesta\n")
-                interactuar = input("Interaccion inicial (e.j <Te acercas al viejo>): ")
+                interactuar = input("Interacción inicial (e.j <Te acercas al viejo>): ")
                 descripcion = input(
-                    "Ingresa el texto que aparecera cuando se interactua con tu personaje: "
+                    "Ingresa el texto que aparecerá cuando se interactúa con tu personaje: "
                 )
                 personaje.write(f"{nombre_acomodado};0;{interactuar};{descripcion}\n")
                 while True:
@@ -146,28 +168,31 @@ def crear_personaje(camino):
                 adios = input(
                     'Que dice tu personaje como despedida? (e.j <"Espero que te coman los perros">): '
                 )
-                print(
-                    "Si quieres que tu personaje tengo una imagen, añade un archivo .txt con el mismo nombre en la carpeta de personajes"
-                )
                 personaje.write(f"{nombre_acomodado};{linea};{salir};{adios}\n")
         except FileExistsError:
             print("ERROR: Este personaje ya existe.")
         except OSError:
-            print("Ha occurrido un problema en el sistema operativo")
+            print("Ha ocurrido un problema en el sistema operativo")
         else:
             print(f"¡{nombre_acomodado} fue creado correctamente!")
 
 
-def crear_objetos(campaña, ubicaciones):
+def crear_objetos(campaña: str, ubicaciones: list[dict]):
+    """Crear objetos en la campaña
+
+    Pre: Pide al usuario que ingrese el nombre del objeto, su descripción, y la ubicación del objeto en el mapa
+    (usando la variable conteniendo las ubicaciones de la campaña).
+    a ese personaje, y sus respuestas.
+    Post: Guarda toda la información en <objetos.csv> en la carpeta de la campaña."""
     archivo_nombre = os.path.join(campaña, "objetos.csv")
     try:
         with open(archivo_nombre, "wt", encoding="utf-8-sig") as objetos:
             objetos.write("nombre;locacion;descripción\n")
-            print_centro("== DEBE DE HABER 1 ITEM QUE EMPIEZE CON * ==")
+            print_centro("== DEBE DE HABER 1 ITEM QUE EMPIECE CON * ==")
             print_centro("== ESTE ITEM SERA REQUERIDO PARA GANAR EL JUEGO ==")
-            print("| Este item estara oculto, y el jugador no sabra donde se encuentra")
+            print("| Este item estará oculto, y el jugador no sabrá donde se encuentra")
             print(
-                "| Asi que algo, o alguien, tendra que decierle donde puede AGARRAR dicho item"
+                "| Asi que algo, o alguien, tendrá que decirle donde puede AGARRAR dicho item"
             )
             while True:
                 print('Para cancelar la carga ingrese "ADIOS".')
@@ -195,14 +220,16 @@ def crear_objetos(campaña, ubicaciones):
     except FileExistsError:
         print("ERROR: <objetos.csv> ya existe")
     except OSError:
-        print("ERROR: Ha occurrido un problema en el sistema operativo")
+        print("ERROR: Ha ocurrido un problema en el sistema operativo")
     except Exception:
         print("Ha ocurrido un error al intentar escribir el archivo")
     else:
         print("Los objetos fueron creados correctamente!")
 
 
-def mapa_linea(lugar, objetos, estado: int, personajes):
+def mapa_linea(lugar: dict, objetos, estado: int, personajes: str) -> str:
+    """Crea cada linea de <mapa.csv> usando los valores obtenidos en las previas funciones
+    usadas para crear la campaña."""
     ubicacion = lugar["ubicacion"]
     adyacentes = lugar["adyacentes"]
     descripcion = lugar["descripcion"]
@@ -217,17 +244,24 @@ def mapa_linea(lugar, objetos, estado: int, personajes):
     return f"{ubicacion};{estado};{adyacentes};{descripcion};{items};{personajes}\n"
 
 
-def leer_objetos(archivo):
+def leer_objetos(archivo: str):
+    """Convertir una lista de diccionarios a un archivo csv."""
     try:
         with open(archivo, "rt", encoding="utf-8-sig") as ob:
             objetos = csv.DictReader(ob, delimiter=";")
             return list(objetos)
     except Exception:
-        print("Ocurrio un error al intentar leer objetos")
+        print("Ocurrió un error al intentar leer objetos")
         return []
 
 
-def crear_mapa(camino, lugares):
+def crear_mapa(camino: str, lugares: list[dict]):
+    """Crear mapa de campaña
+
+    Pre: Toma el camino a la carpeta de campaña y la lista de ubicaciones en el mapa.
+    Post: Lee los archivos <objetos.csv> y todos los personajes el la carpeta de personajes
+    y los usa para crear <mapa.csv>. Pregunta al usuario en que ubicacion del mapa se encuentra
+    cada personaje."""
     archivo_nombre = os.path.join(camino, "mapa.csv")
     camino_archivo = os.path.join(camino, "personajes")
     archivo_objetos = os.path.join(camino, "objetos.csv")
