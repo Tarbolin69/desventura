@@ -12,7 +12,7 @@ Imaginemos lo siguiente:
 ---'------'-----''-------'---'----'--
 ~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~`~
 
-Te encuntras en una cabaña, en un gran y dense bosque de la elada tundra siberica. No recuerdas un tiempo en donde no hayas estado aqui. Aparte dela sala principal, tienes un Baño, un Sotano, y un Patio. Todos estan conectadosa esta sala principal. 
+Te encuentras en una cabaña, en un gran y dense bosque de la helada tundra Ibérica. No recuerdas un tiempo en donde no hayas estado aquí. Aparte dela sala principal, tienes un Baño, un Sótano, y un Patio. Todos están conectadas esta sala principal. 
 
 No ves nada de uso en la sala principal.
 
@@ -20,9 +20,9 @@ Las opciones a tu disposición en Desventura son las siguientes:
     * Mirar <objeto>: Te da la descripción de un objeto o sobre donde estas
     * Hablar <personaje>: Te permite hablar con un personaje
     * Agarrar <objeto>: Te permite poner un objeto en tu inventario
-    * Ir <locacion>: Vas hacia una locacion adyacenta a donde estas
+    * Ir <locación>: Vas hacia una locación adyacente a donde estas
     * Usar <objeto>: Usa uno de tus objetos
 
-Tambien puedes usar "SALIR" para guardar la partida y salir del programa.
+También puedes usar "SALIR" para guardar la partida y salir del programa.
 
 ¡Intenta usar una de estas opciones y observa que ocurre!

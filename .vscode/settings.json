@@ -4,6 +4,12 @@
     "cSpell.language": "es-ES",
     "cSpell.words": [
         "adyacencia",
-        "adyacencias"
+        "adyacencias",
+        "desolita",
+        "motados"
+    ],
+    "cSpell.enableFiletypes": [
+        "csv",
+        "csv (semicolon)"
     ]
 }
