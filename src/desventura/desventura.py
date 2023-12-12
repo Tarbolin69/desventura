@@ -7,6 +7,9 @@ import textwrap
 
 
 def menu_principal():
+    """Menu principal de Desventura.
+
+    Pregunta al usuario si quiere iniciar una nueva partida, continuar una partida, ver los créditos, o salir."""
     print(
         r"""
   .-,--.                       .
@@ -19,7 +22,7 @@ def menu_principal():
 """
     )
     while True:
-        eleccion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
+        eleccion = input("\n¿Que te gustaría hacer?\n> ").strip().lower()
         match eleccion:
             case "1":
                 nuevo_juego()
@@ -31,12 +34,13 @@ def menu_principal():
                 print("¡Hasta pronto!")
                 break
             case _:
-                print("Opcion invalida")
+                print("Opción invalida")
 
 
 def nuevo_juego():
+    """Pregunta al usuario si desea jugar al tutorial, si no, pregunta al usuario que campaña jugar."""
     while True:
-        aceptar = input("Desearia ver el tutorial? (Si/No)\n> ").strip().lower()
+        aceptar = input("Desearía ver el tutorial? (Si/No)\n> ").strip().lower()
         if aceptar == "si":
             iniciar_nueva_partida("venturas_en_holand")
             break
@@ -45,34 +49,45 @@ def nuevo_juego():
             iniciar_nueva_partida(campaña)
             break
         else:
-            print("Opcion invalida")
+            print("Opción invalida")
             print()
 
 
 def creditos():
+    """Imprime por pantalla los créditos de Desventura"""
     try:
         with open("creditos.txt", "rt", encoding="utf-8") as creditos:
             print(creditos.read())
-    except FileExistsError or FileNotFoundError as err:
+    except Exception as err:
         print("ERROR: " + repr(err))
 
 
-def archivo_a_dict(camino):
+def archivo_a_dict(camino: str) -> list[dict]:
+    """Convierte archivo csv a lista de diccionarios
+
+    Pre: Recibe un camino completo o relativo hacia el archivo csv (delimitado por ;) a leer.
+    Post: Se devuelve una lista de diccionarios con key/values obtenidos por cada columna del archivo,
+    devuelve una lista de diccionarios vacía si ocurrió un error al leer el archivo"""
     try:
         with open(camino, "rt", encoding="utf-8-sig") as archivo:
             csv_dict = csv.DictReader(archivo, delimiter=";")
             return list(csv_dict)
     except Exception:
-        print("El archivo no pudo ser leido")
-        return
+        print("El archivo no pudo ser leído")
+        return [{}]
 
 
 def archivo_a_txt(camino: str) -> list[str]:
+    """Guardar y formatear archivo .txt a memoria.
+
+    Pre: Recibe un camino completo o relativo hacia el archivo a leer.
+    Post: Se devuelve una lista compuesta por las lineas del archivo leído,
+    o una lista vacía si ocurrió un error al leer el archivo."""
     try:
         with open(camino, "rt", encoding="utf-8-sig") as archivo:
             archivo_leido = archivo.read().split("\n")
     except Exception:
-        print("El archivo no pudo ser leido")
+        print("El archivo no pudo ser leído")
         return [""]
     else:
         return archivo_leido
@@ -94,7 +109,9 @@ def acciones_posibles():
         print(f"- {accion} {objetivo}")
 
 
-def mirar(objetivo: str, mapa, objetos, inventario):
+def mirar(objetivo: str, mapa: list[dict], objetos: list[dict], inventario: list[dict]):
+    """Imprime la descripción de una ubicación, un objeto en la ubicación actual o en el inventario,
+    o los contenidos del inventario."""
     objetivo = objetivo.title()
     if objetivo == "Inventario":
         if inventario:
@@ -103,7 +120,7 @@ def mirar(objetivo: str, mapa, objetos, inventario):
                 print(f"- {item['nombre']}")
             return
         else:
-            print("Tu inventario esta vacio")
+            print("Tu inventario esta vació")
             return
     for locacion in mapa:
         if (
@@ -126,6 +143,8 @@ def mirar(objetivo: str, mapa, objetos, inventario):
 
 
 def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
+    """Mueve un objeto con el que puedas interactuar desde la lista de objetos a tu inventario.
+    Remuevo ese objeto de los objetos disponibles en la ubicación actual."""
     objetivo = objetivo.title()
     objetivo_especial = "*" + objetivo.title()
     for locacion in mapa:
@@ -151,7 +170,11 @@ def agarrar(objetivo: str, mapa: list[dict], objetos: list[dict]):
     print(f"No puedes agarrar {objetivo}")
 
 
-def usar(objetivo: str, inventario: list[dict], mapa: list[dict], texto_final):
+def usar(
+    objetivo: str, inventario: list[dict], mapa: list[dict], texto_final: list[str]
+):
+    """Usa un objeto que poseas en tu inventario en la ubicación actual. Actualmente esto
+    sirve solamente para ganar la campaña."""
     item_titulo = "*" + objetivo.title()
     final = False
     for item in inventario:
@@ -162,11 +185,12 @@ def usar(objetivo: str, inventario: list[dict], mapa: list[dict], texto_final):
         for locacion in mapa:
             if locacion["estado"] == "3":
                 victoria(texto_final)
-        print("No puedes usar este item aqui")
+        print("No puedes usar este item aquí")
     print("No tienes ese item en tu inventario")
 
 
 def hablar(objetivo: str, mapa, camino):
+    """Habla con un personaje disponible en tu ubicación actual."""
     personaje = objetivo.strip().lower() + ".csv"
     for locacion in mapa:
         if locacion["estado"] == "1" and locacion["personajes"] == personaje:
@@ -176,6 +200,10 @@ def hablar(objetivo: str, mapa, camino):
 
 
 def hablar_con_personaje(camino: str, personaje: str):
+    """Abrir menu de dialogo con personaje seleccionado
+
+    Pre: Se recibe el camino a la carpeta de la campaña y el nombre de un personaje (dado por el usuario)
+    Post: Abre un menu que permite seleccionar las opciones de dialogo disponibles de ese personaje"""
     ruta = os.path.join(camino, "personajes", personaje)
     with open(ruta, "rt", encoding="utf-8-sig") as renglones:
         dialogos = [x.rstrip().split(";") for x in renglones]
@@ -202,6 +230,8 @@ def hablar_con_personaje(camino: str, personaje: str):
 
 
 def ir(objetivo: str, mapa: list[dict]):
+    """Cambia el 'estado' de la ubicación objetivo a '1' o '3' (indicando que el usuario se encuentra hay)
+    y el 'estado' de la ubicación inicial a '0' o '2' (indicando que el usuario no se encuentra hay)"""
     objetivo_locacion = objetivo.title()
     inicio = dict()
     for locacion in mapa:
@@ -237,7 +267,22 @@ def ir(objetivo: str, mapa: list[dict]):
     print(f"No puedes ir a {objetivo_locacion}")
 
 
-def acciones(accion, mapa, objetos, camino, inventario, texto_final, campaña):
+def acciones(
+    accion: str,
+    mapa: list[dict],
+    objetos: list[dict],
+    camino: str,
+    inventario: list[dict],
+    texto_final: list[str],
+    campaña: str,
+):
+    """Lógica para las acciones en el juego.
+
+    Hereda todas los argumentos esenciales para que el juego funcione,
+    obtenidos usando los archivos de la carpeta de campaña seleccionada.
+
+    Toma también el input de 'acción' del usuario y lo divide en dos partes: <acción> <objetivo>.
+    <acción> es usada para seleccionar la acción, mientras que <objetivo> se convierte en el argumento de dicha acción"""
     if not accion:
         print()
         print("Ingrese una opcion valida")
@@ -266,11 +311,13 @@ def acciones(accion, mapa, objetos, camino, inventario, texto_final, campaña):
             acciones_posibles()
 
 
-def print_acomodado(texto):
+def print_acomodado(texto: str):
+    """Imprime texto con un largo de linea máximo de 80 caracteres. Acomoda a nueva linea si lo excede."""
     print(textwrap.fill(texto, 80))
 
 
-def describir_locacion(mapa):
+def describir_locacion(mapa: list[dict]):
+    """Imprime la descripción, lista de items y adyacencias de la ubicación actual (que puede ser '1' o '3')"""
     for locacion in mapa:
         if locacion["estado"] in ["1", "3"]:
             adyacentes = ast.literal_eval(locacion["adyacentes"])
@@ -299,22 +346,34 @@ def describir_locacion(mapa):
     print("No ves nada de uso en este lugar")
 
 
-def juego(mapa, objetos, camino, texto_final, inventario, campaña):
+def juego(
+    mapa: list[dict],
+    objetos: list[dict],
+    camino: str,
+    texto_final: list[str],
+    inventario: list[dict],
+    campaña: str,
+):
+    """Loop central del juego. Pide al usuario que ingrese una accion continuamente
+    hasta que se gane el juego o se ingrese la opción de salir."""
     describir_locacion(mapa)
     while True:
-        accion = input("\n¿Que te gustaria hacer?\n> ").strip().lower()
+        accion = input("\n¿Que te gustaría hacer?\n> ").strip().lower()
         acciones(accion, mapa, objetos, camino, inventario, texto_final, campaña)
 
 
 def print_centro(texto: str):
+    """Imprime texto centrado en la terminal."""
     print(texto.center(shutil.get_terminal_size().columns))
 
 
 def limpiar_pantalla():
+    """Limpia la terminal (tanto en Windows como UNIX)."""
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def iniciar_nueva_partida(campaña):
+def iniciar_nueva_partida(campaña: str):
+    """Inicia nueva partida usando una carpeta de campaña."""
     inventario = []
     camino = os.path.join("historias", campaña)
     intro_archivo = os.path.join(camino, "INICIO.txt")
@@ -332,7 +391,8 @@ def iniciar_nueva_partida(campaña):
     juego(dict_mapa, dict_objetos, camino, fin_texto, inventario, campaña)
 
 
-def iniciar_partida(campaña):
+def iniciar_partida(campaña: str):
+    """Continua una partida usando una carpeta de partida guardada."""
     camino = os.path.join("partidas", campaña)
     intro_archivo = os.path.join(camino, "INICIO.txt")
     fin_archivo = os.path.join(camino, "FINAL.txt")
@@ -352,9 +412,13 @@ def iniciar_partida(campaña):
     juego(dict_mapa, dict_objetos, camino, fin_texto, dict_inventario, campaña)
 
 
-def guardar_partida(camino, mapa, objetos, inventario):
+def guardar_partida(
+    camino: str, mapa: list[dict], objetos: list[dict], inventario: list[dict]
+):
+    """Crea una nueva carpeta en la carpeta 'partidas' con el estado actual de la campaña,
+    incluyendo el inventario, antes de salir. Si el usuario ingresa 'no', simplemente sale del programa."""
     while True:
-        eleccion = input("\n¿Te gustaria guardar (Si/No)?\n> ").strip().lower()
+        eleccion = input("\n¿Te gustaría guardar (Si/No)?\n> ").strip().lower()
         if eleccion == "no":
             quit()
         elif eleccion == "si":
@@ -373,7 +437,8 @@ def guardar_partida(camino, mapa, objetos, inventario):
         print("Ingrese una opcion valida")
 
 
-def elegir_campaña(carpeta):
+def elegir_campaña(carpeta: str):
+    """Lista todas las campañas disponibles para jugar y le pregunta al usuario cual quiere elegir."""
     lista_directorios = os.listdir(carpeta)
     while True:
         print("Campañas Disponibles:")
@@ -387,7 +452,8 @@ def elegir_campaña(carpeta):
     return os.path.join(nombre_directorio)
 
 
-def crear_copia_aventura(camino, partida):
+def crear_copia_aventura(camino: str, partida: str):
+    """Crea una copia de los archivos estáticos de la campaña a guardar."""
     inicio = os.path.join(camino, "INICIO.txt")
     final = os.path.join(camino, "FINAL.txt")
     personajes = os.path.join(camino, "personajes")
@@ -397,7 +463,8 @@ def crear_copia_aventura(camino, partida):
     shutil.copytree(personajes, personajes_partida)
 
 
-def crear_mapa_guardado(mapa, partida):
+def crear_mapa_guardado(mapa: list[dict], partida: str):
+    """Guarda el estado actual del mapa a un archivo csv en la carpeta de partidas"""
     mapa_locacion = os.path.join(partida, "mapa.csv")
     header = ["ubicacion", "estado", "adyacentes", "texto", "items", "personajes"]
     try:
@@ -414,7 +481,8 @@ def crear_mapa_guardado(mapa, partida):
         print("No se pudo guardar el mapa")
 
 
-def crear_objetos_guardado(objetos, partida):
+def crear_objetos_guardado(objetos: list[dict], partida: str):
+    """Guarda el estado actual de los objetos a un archivo csv en la carpeta de partidas"""
     objetos_locacion = os.path.join(partida, "objetos.csv")
     header = ["nombre", "locacion", "descripción"]
     try:
@@ -431,7 +499,8 @@ def crear_objetos_guardado(objetos, partida):
         print("No se pudo guardar los objetos")
 
 
-def crear_inventario_csv(inventario, partida):
+def crear_inventario_csv(inventario: list[dict], partida: str):
+    """Guarda el estado actual del inventario a un archivo csv en la carpeta de partidas"""
     inventario_locacion = os.path.join(partida, "inventario.csv")
     header = ["nombre", "locacion", "descripción"]
     try:
@@ -451,8 +520,9 @@ def crear_inventario_csv(inventario, partida):
 
 
 def continuar_partida():
+    """Pregunta al usuario si desea continuar una partida. Lista las partidas guardadas si se desea continuar."""
     while True:
-        aceptar = input("¿Desearia continuar una partida? (Si/No)\n> ").strip().lower()
+        aceptar = input("¿Desearía continuar una partida? (Si/No)\n> ").strip().lower()
         if aceptar == "si":
             campaña = elegir_campaña("partidas")
             iniciar_partida(campaña)
@@ -460,10 +530,11 @@ def continuar_partida():
         elif aceptar == "no":
             break
         else:
-            print("Opcion invalida")
+            print("Opción invalida")
 
 
-def victoria(texto_final):
+def victoria(texto_final: list[str]):
+    """Imprime el texto de victoria y termina el juego, saliendo del programa."""
     limpiar_pantalla()
     for linea in texto_final:
         print_acomodado(linea)
