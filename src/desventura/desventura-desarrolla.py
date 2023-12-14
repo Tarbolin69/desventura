@@ -104,14 +104,20 @@ def nombrar_ubicaciones() -> list[dict]:
         print('Ingresar "ADIOS" si no hay mas adyacencias')
         for _ in range(len(disponibles)):
             adyacente = (
-                input(f"Ingrese una adyacencia a {lugar['ubicacion']}: ")
+                input(f"ingrese una adyacencia a {lugar['ubicacion']}: ")
                 .strip()
                 .title()
             )
             if adyacente.lower() == "adios":
                 break
             if adyacente not in disponibles or adyacente in lugar["adyacentes"]:
-                print("Ingrese una ubicacion existente y que no sea ya adyacente")
+                while True:
+                    print("Ingrese una ubicacion existente y que no sea ya adyacente")
+                adyacente = (
+                    input(f"ingrese una adyacencia a {lugar['ubicacion']}: ")
+                    .strip()
+                    .title()
+                )
             else:
                 lugar["adyacentes"].append(adyacente)
     return ubicaciones
