@@ -3,12 +3,15 @@ import csv
 import shutil
 
 
-def print_centro(texto: str):
-    """Imprime texto centrado en la terminal."""
+def print_centro(texto: str) -> None:
+    """Centrar print
+
+    Pre: Toma un str de cualquier largo.
+    Post: Imprime texto centrado en la terminal."""
     print(texto.center(shutil.get_terminal_size().columns))
 
 
-def crear_campaña():
+def crear_campaña() -> str | None:
     """Crear nueva campaña
 
     Pre: Pregunta al usuario por el nombre de la campaña.
@@ -24,11 +27,12 @@ def crear_campaña():
         os.makedirs(campaña_carpeta)
     except OSError:
         print("Ha ocurrido un error al crear la carpeta")
+        return
     else:
         return campaña_carpeta
 
 
-def texto_inicio(campaña: str):
+def texto_inicio(campaña: str) -> None:
     """Crear introducción a la campaña
 
     Pre: Pide al usuario que ingrese un texto introductorio a su campaña.
@@ -41,13 +45,13 @@ def texto_inicio(campaña: str):
         print("Por favor, ingrese algún texto.")
     try:
         archivo_nombre = os.path.join(campaña, "INICIO.txt")
-        with open(archivo_nombre, "wt", encoding="utf-8-sig") as introduccion:
-            introduccion.write(inicio)
+        with open(archivo_nombre, "wt", encoding="utf-8-sig") as introducción:
+            introducción.write(inicio)
     except Exception as err:
         print("Hubo un error al crear el archivo:" + repr(err))
 
 
-def texto_final(campaña: str):
+def texto_final(campaña: str) -> None:
     """Crear un texto de victoria para la campaña
 
     Pre: Pide al usuario que ingrese un texto de victoria a su campaña.
@@ -123,16 +127,16 @@ def nombrar_ubicaciones() -> list[dict]:
     return ubicaciones
 
 
-def crear_personaje(camino: str):
+def crear_personaje(camino: str) -> None:
     """Crear personajes en la campaña
 
     Pre: Pide al usuario que ingrese el nombre de su personaje, cuales son las preguntas que se le pueden hacer
     a ese personaje, y sus respuestas.
     Post: Guarda toda la información en un csv en la carpeta de 'personajes' dentro de la carpeta de la campaña."""
-    multiples = False
+    múltiples = False
     while True:
         while True:
-            if multiples:
+            if múltiples:
                 crear = input("Desea crear otro personaje? (Si/No): ").strip()
             else:
                 crear = input("Desea crear un personaje? (Si/No): ").strip()
@@ -141,7 +145,7 @@ def crear_personaje(camino: str):
             elif crear.lower() == "si":
                 break
             print("Ingrese una opción valida")
-        multiples = True
+        múltiples = True
         nombre = input("Cual es en nombre de tu personaje? ")
         nombre_acomodado = nombre.strip().title()
         nombre_archivo = nombre.strip().lower().replace(" ", "_")
@@ -183,7 +187,7 @@ def crear_personaje(camino: str):
             print(f"¡{nombre_acomodado} fue creado correctamente!")
 
 
-def crear_objetos(campaña: str, ubicaciones: list[dict]):
+def crear_objetos(campaña: str, ubicaciones: list[dict]) -> None:
     """Crear objetos en la campaña
 
     Pre: Pide al usuario que ingrese el nombre del objeto, su descripción, y la ubicación del objeto en el mapa
@@ -234,7 +238,11 @@ def crear_objetos(campaña: str, ubicaciones: list[dict]):
 
 
 def mapa_linea(lugar: dict, objetos, estado: int, personajes: str) -> str:
-    """Crea cada linea de <mapa.csv> usando los valores obtenidos en las previas funciones
+    """Linea en <mapa.csv>.
+
+    Pre: Toma el diccionario del lugar actual (ubicación), los objetos en dicha ubicacion, sus
+    adyacencias, su estado y los personajes que hay en la misma.
+    Post: Crea cada linea de <mapa.csv> usando los valores obtenidos en las previas funciones
     usadas para crear la campaña."""
     ubicacion = lugar["ubicacion"]
     adyacentes = lugar["adyacentes"]
@@ -250,19 +258,23 @@ def mapa_linea(lugar: dict, objetos, estado: int, personajes: str) -> str:
     return f"{ubicacion};{estado};{adyacentes};{descripcion};{items};{personajes}\n"
 
 
-def leer_objetos(archivo: str):
-    """Convertir una lista de diccionarios a un archivo csv."""
+def leer_objetos(archivo: str) -> list[dict]:
+    """Convertir lista de diccionarios a archivo csv.
+
+    Pre: Toma el camino del archivo a leer.
+    Post: Convierte el csv a una lista de diccionarios.
+    """
     try:
         with open(archivo, "rt", encoding="utf-8-sig") as ob:
             objetos = csv.DictReader(ob, delimiter=";")
             return list(objetos)
     except Exception:
         print("Ocurrió un error al intentar leer objetos")
-        return []
+        return [{}]
 
 
-def crear_mapa(camino: str, lugares: list[dict]):
-    """Crear mapa de campaña
+def crear_mapa(camino: str, lugares: list[dict]) -> None:
+    """Crear mapa de campaña.
 
     Pre: Toma el camino a la carpeta de campaña y la lista de ubicaciones en el mapa.
     Post: Lee los archivos <objetos.csv> y todos los personajes el la carpeta de personajes
