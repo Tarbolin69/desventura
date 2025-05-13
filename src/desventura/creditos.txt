@@ -1,12 +1,3 @@
 ==== Creditos de Desventura ====
 
-Desventura es un motor de juegos creado en la Sede Pinamar de UADE por:
-
-* Fidel Santos
-* Nicolás Ortega
-* Ezequiel Jofre
-* Ramiro de Biase
-
-en 2023 como parte del projecto final de Algoritmos y Datos 1
-
-Esperemos que les haya gustado el juego :)
+Espero que les haya gustado :)
